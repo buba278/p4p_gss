@@ -19,6 +19,10 @@ def velocity_to_doppler(velocity_ms):
     # fd = 2v * f0 * cos(theta) / c
     return (2 * velocity_ms * CARRIER_FREQ * np.cos(MOUNT_ANGLE_RAD)) / C
 
+def doppler_to_velocity(freq_hz):
+    # FPGA computation from freq bin - END GOAL
+    return (freq_hz * C) / (2 * CARRIER_FREQ * np.cos(MOUNT_ANGLE_RAD))
+
 def make_test_signal(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
     # seconds axis
     t = np.arrange(n_samples) / SAMPLE_RATE
@@ -32,3 +36,6 @@ def make_test_signal(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
 
     return clean_signal + noise, target_freq
 
+print(f"5 m/s -> {velocity_to_doppler(5):.1f} Hz")
+print(f"10 m/s -> {velocity_to_doppler(10):.1f} Hz")
+print(f"30 m/s -> {velocity_to_doppler(30):.1f} Hz")
