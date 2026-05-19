@@ -11,10 +11,10 @@ SAMPLE_RATE = 50000 # ADC rate - nyquist 25kHz
 FFT_SIZE = 1024 # (accuracy vs latency)
 
 CARRIER_FREQ = 24e9
-MOUNT_ANGLE_DEG = 45
-MOUNT_ANGLE_RAD = np.radians(MOUNT_ANGLE_DEG)
+MOUNT_ANGLE_RAD = np.radians(45)
 C = 3e8 # speed of light
 
+# -- doppler conversions --
 def velocity_to_doppler(velocity_ms):
     # find what peak freq to expect in spectrum
     # fd = 2v * f0 * cos(theta) / c
@@ -24,7 +24,9 @@ def doppler_to_velocity(freq_hz):
     # FPGA computation from freq bin - END GOAL
     return (freq_hz * C) / (2 * CARRIER_FREQ * np.cos(MOUNT_ANGLE_RAD))
 
+# -- signal gen --
 def make_test_signal(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
+    """Generate synthetic data."""
     # seconds axis
     t = np.arrange(n_samples) / SAMPLE_RATE
     
@@ -37,7 +39,9 @@ def make_test_signal(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
 
     return clean_signal + noise, target_freq
 
+# -- pipeline execution --
 def process_frame(samples):
+    """Run full processing chain."""
     n = len(samples)
 
     # -- hamming window --
@@ -86,3 +90,17 @@ def process_frame(samples):
     velocity = doppler_to_velocity(peak_freq)
     
     return velocity, freq_axis, freq_spectrum, correlation, peak_freq
+
+# -- result post processing --
+def compare_peak_track_algs(velocity, noise_amplitude=0.0):
+    """Run all algorithms on same signal and print comparison table."""
+    pass
+
+def plot_comparison(samples, results, true_freq, title=""):
+    pass
+
+
+# -- file execution / data loading --
+
+if __name__ == '__main__':
+    pass
