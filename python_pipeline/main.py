@@ -5,7 +5,7 @@ from pipeline import run_pipeline, ESTIMATORS, velocity_to_doppler, doppler_to_v
 from data_loader import make_sine, make_two_targets, load_scope_csv, prepare_scope_signal
 from plotting import plot_raw_signal, plot_pipeline_stages, plot_estimator_comparison
 
-MODE = 'real' # 'synthetic' or 'real'
+MODE = 'synthetic' # 'synthetic' or 'real'
 CSV_FILE = 'data/scope_1.csv' # only used when MODE = 'real'
 
 # Which estimators to compare - comment out if dont want part of processing
@@ -62,7 +62,7 @@ def run_synthetic():
             results,
             true_freq=true_freq,
             title=f"{label}  |  window={WINDOW_TYPE}  cfar={USE_CFAR}",
-            filename=f'comparison_{safe_label}.png'
+            filename=f'synthetic_comparison_{safe_label}.png'
         )
 
         # Save detailed pipeline plot for XCA (or first active estimator)
@@ -70,7 +70,7 @@ def run_synthetic():
         plot_pipeline_stages(
             results[detail_est],
             true_freq=true_freq,
-            filename=f'pipeline_{safe_label}.png'
+            filename=f'synthetic_pipeline_{safe_label}.png'
         )
 
 def run_real():
@@ -104,11 +104,11 @@ def run_real():
     plot_estimator_comparison(
         results,
         title=f"Real data: {CSV_FILE}  |  window={WINDOW_TYPE}  cfar={USE_CFAR}",
-        filename='comparison_real.png'
+        filename='real_comparison.png'
     )
 
     detail_est = 'xca' if 'xca' in ACTIVE_ESTIMATORS else ACTIVE_ESTIMATORS[0]
-    plot_pipeline_stages(results[detail_est], filename='pipeline_real.png')
+    plot_pipeline_stages(results[detail_est], filename=detail_est + 'real_pipeline.png')
 
 
 if __name__ == '__main__':
