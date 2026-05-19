@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from config import SAMPLE_RATE
 from pipeline import doppler_to_velocity
 
-IMAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'images')
+IMAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output_images')
 
 def _save(filename):
     os.makedirs(IMAGES_DIR, exist_ok=True)
