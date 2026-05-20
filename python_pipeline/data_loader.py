@@ -20,18 +20,6 @@ def make_sine(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
     noise  = np.random.normal(0, noise_amplitude, n_samples)
     return signal + noise, freq
 
-def make_two_targets(velocity_1, velocity_2, noise_amplitude=0.0, n_samples=FFT_SIZE):
-    """
-    Two simultaneous targets — tests whether the estimator can handle
-    a cluttered spectrum. Real radar returns often have multiple scatterers.
-    """
-    t    = np.arange(n_samples) / SAMPLE_RATE
-    f1   = velocity_to_doppler(velocity_1)
-    f2   = velocity_to_doppler(velocity_2)
-    sig  = np.sin(2 * np.pi * f1 * t) + 0.5 * np.sin(2 * np.pi * f2 * t)
-    noise = np.random.normal(0, noise_amplitude, n_samples)
-    return sig + noise, f1
-
 # ── Real data loader ──────────────────────────────────────────────────────────
 
 def load_scope_csv(filepath):
