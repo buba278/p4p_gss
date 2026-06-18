@@ -9,16 +9,81 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ── Synthetic signals ─────────────────────────────────────────────────────────
 
-def make_sine(velocity_ms, noise_amplitude=0.0, n_samples=FFT_SIZE):
+def make_sine(velocity_ms, noise_config=None, n_samples=FFT_SIZE):
     """
-    Single sine wave at the Doppler frequency for a given velocity.
-    noise_amplitude=0 gives a clean signal, increase to simulate real conditions.
+    Generates a synthetic Doppler radar return signal with combinable noise models.
+    
+    noise_config can be a float (treated as standard white noise amplitude) or a dict:
+    {
+        'white': 0.5,         # Additive White Gaussian Noise amplitude
+        'flicker': 0.4,       # 1/f noise amplitude (ruins low frequencies/CMA)
+        'dropout': True,      # Simulates hitting a puddle (signal drops by 90%)
+        'vibration': 0.15,    # Chassis/engine vibration amplitude (adds phase jitter)
+        'beam_spread': 0.04   # Simulates antenna beam cone width spread (fraction of freq)
+    }
     """
-    t      = np.arange(n_samples) / SAMPLE_RATE
-    freq   = velocity_to_doppler(velocity_ms)
-    signal = np.sin(2 * np.pi * freq * t)
-    noise  = np.random.normal(0, noise_amplitude, n_samples)
-    return signal + noise, freq
+    # Maintain backward-compatibility with single-float inputs
+    if isinstance(noise_config, (int, float)):
+        noise_config = {'white': float(noise_config)}
+    elif noise_config is None:
+        noise_config = {}
+
+    t = np.arange(n_samples) / SAMPLE_RATE
+    freq = velocity_to_doppler(velocity_ms)
+
+    # 1. Base Phase Generation + Vibration Phase Jitter
+    # Vibration shakes the physical sensor, which modulates the carrier phase over time
+    phase = 2 * np.pi * freq * t
+    if 'vibration' in noise_config and noise_config['vibration'] > 0:
+        v_amp = noise_config['vibration']
+        v_freq = noise_config.get('vibration_freq', 120.0) # 120 Hz engine hum baseline
+        phase += v_amp * np.sin(2 * np.pi * v_freq * t)
+
+    # 2. Core Signal Generation (with optional Beam Spread)
+    # Ground radar beams have finite widths; they look like a cluster of frequencies
+    # rather than an infinitely thin line. This gives XCA its Gaussian target shape.
+    if noise_config.get('beam_spread', 0) > 0:
+        spread_hz = freq * noise_config['beam_spread']
+        num_components = 30
+        freq_components = np.random.normal(freq, spread_hz, num_components)
+        
+        signal = np.zeros(n_samples)
+        for f in freq_components:
+            p = 2 * np.pi * f * t
+            if 'vibration' in noise_config and noise_config['vibration'] > 0:
+                p += v_amp * np.sin(2 * np.pi * v_freq * t)
+            signal += np.sin(p)
+        signal /= np.sqrt(num_components) # Normalize power
+    else:
+        signal = np.sin(phase)
+
+    # 3. Specular Dropout (Wet Track / Puddles)
+    # Water acts like a mirror, bouncing energy away from the receiver.
+    if noise_config.get('dropout', False):
+        dropout_mask = np.ones(n_samples)
+        # Drop signal power to 10% for the middle portion of the sampling frame
+        dropout_mask[n_samples // 4 : 3 * n_samples // 4] = 0.1
+        signal *= dropout_mask
+
+    # 4. Generate and Combine Noise Types
+    total_noise = np.zeros(n_samples)
+
+    # Additive White Gaussian Noise (AWGN)
+    if 'white' in noise_config and noise_config['white'] > 0:
+        total_noise += np.random.normal(0, noise_config['white'], n_samples)
+
+    # Pink/Flicker (1/f) Noise
+    if 'flicker' in noise_config and noise_config['flicker'] > 0:
+        white_source = np.random.normal(0, 1, n_samples)
+        f_axis = np.fft.rfftfreq(n_samples)
+        f_axis[0] = 1.0  # Avoid division by zero at DC bin
+        flicker_filter = 1.0 / np.sqrt(f_axis)
+        
+        flicker_raw = np.fft.irfft(np.fft.rfft(white_source) * flicker_filter, n=n_samples)
+        flicker_noise = (flicker_raw / np.std(flicker_raw)) * noise_config['flicker']
+        total_noise += flicker_noise
+
+    return signal + total_noise, freq
 
 # ── Real data loader ──────────────────────────────────────────────────────────
 
