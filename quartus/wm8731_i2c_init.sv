@@ -3,7 +3,7 @@
 // - write-only 2-wire mode, 100 kHz
 // - data sent as: [device_addr+W] [B15:B8] [B7:B0] with ACK after each byte
 // - NACK on any byte aborts the sequence: 
-//   bus is cleanly STOPped, init_done never asserts, and led_nack latches on + blinks for visibility.
+//   bus is cleanly STOPped, init_done never asserts
 
 module wm8731_i2c_init (
     input  logic clk,        // 50 MHz FPGA system clock
@@ -11,12 +11,11 @@ module wm8731_i2c_init (
     output logic scl,        // I2C clock (driven push-pull: we're the only master, see 3.1.1)
     inout  wire  sda,        // I2C data  (open-drain: we drive low or release to Z)
     output logic init_done,  // asserted permanently once all registers ACKed successfully
-    output logic nack_error, // sticky, non-blinking: asserted permanently if any byte was NACKed
-    output logic led_nack    // = nack_error, blinked at ~1.5 Hz for a physical LED
+    output logic nack_error // sticky, non-blinking: asserted permanently if any byte was NACKed
 );
 
 // packed array of constants - synthesises to hardwired mux, not RAM (refer to wm8731 datasheet "Software Control")
-localparam int NUM_REGS = 9;
+localparam int NUM_REGS = 8;
 localparam logic [15:0] PROGRAM_REGISTERS [0:NUM_REGS-1] = '{
     // reg data (7 bit address + 9 bits of data), reg description
     // order based on usage - leave stuff as "flat" as possible + only use left line (we are mono)
@@ -332,18 +331,5 @@ always_ff @(posedge clk or negedge rst_n) begin
         endcase
     end
 end
-
-// --- NACK LED blink ---
-// Free-running divider off the raw 50 MHz clock (independent of phase_tick)
-// so the blink rate doesn't depend on I2C timing. Bit 24 of a 25-bit counter
-// toggles at 50 MHz / 2^25 ~= 1.5 Hz
-logic [24:0] blink_cnt;
-always_ff @(posedge clk or negedge rst_n) begin
-    if (!rst_n)
-        blink_cnt <= '0;
-    else
-        blink_cnt <= blink_cnt + 1'b1;
-end
-assign led_nack = nack_error & blink_cnt[24];
 
 endmodule

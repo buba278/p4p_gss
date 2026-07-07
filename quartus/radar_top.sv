@@ -57,7 +57,8 @@ wm8731_i2c_init i2c_init_inst (
     .rst_n     (pll_locked), // dont send I2C till clock stable
     .scl       (I2C_SCLK),
     .sda       (I2C_SDAT),
-    .init_done (init_done)
+    .init_done (init_done),
+    .nack_error (nack_error)
 );
 assign AUD_DACDAT = 1'b0;       // DAC is powered down
 
