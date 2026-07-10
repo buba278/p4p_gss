@@ -21,10 +21,10 @@ module i2s_rx (
 // lrclk and sdata are sampled directly - no sync needed
 
 logic lrclk_d;    // one cycle delayed for edge detect
-logic lrclk_fall; // left channel start
+logic lrclk_fall_b; // left channel start
 
-logic [4:0]  bclk_cnt;     // 0..31 within a half-frame (left channel)
-logic [23:0] shift_reg;    // accumulates bits MSB-first
+logic [4:0]  bclk_cnt_b;   // 0..31 within a half-frame (left channel)
+logic [23:0] shift_reg_b;    // accumulates bits MSB-first
 
 // outputs but in bclk domain - need to transfer for rest of FPGA
 logic [23:0] sample_l_b;
@@ -34,8 +34,8 @@ logic        valid_b;
 logic rst_n_bclk_meta, rst_n_bclk;
 always_ff @(posedge bclk or negedge rst_n) begin
     if (!rst_n) begin 
-        rstn_n_bclk_meta <= '0;
-        rstn_n_bclk      <= '0;
+        rst_n_bclk_meta <= '0;
+        rst_n_bclk      <= '0;
     end else begin
         rst_n_bclk_meta <= 1'b1;
         rst_n_bclk      <= rst_n_bclk_meta;
@@ -57,13 +57,13 @@ always_ff @(posedge bclk or negedge rst_n_bclk) begin
         lrclk_fall_b = lrclk_d & ~lrclk;
 
         if (lrclk_fall_b) begin
-            blk_cnt_b <= '0;
+            bclk_cnt_b <= '0;
         end else begin
             if (bclk_cnt_b < 5'd31)
                 bclk_cnt_b <= bclk_cnt_b + 1'b1;
 
             // ignore idle and padding bits
-            if (bclk_cnt_b) >= 5'd1 && bclk_cnt_b <= 5'd24)
+            if ((bclk_cnt_b) >= 5'd1 && bclk_cnt_b <= 5'd24)
                 shift_reg_b <= {shift_reg_b[22:0], sdata};
 
             // done shifting data
@@ -76,6 +76,8 @@ always_ff @(posedge bclk or negedge rst_n_bclk) begin
 end
 
 // -- bclk -> clk domain crossing for outputs --
+logic [23:0] sample_l_sync0, sample_l_sync1;
+logic        valid_sync0, valid_sync1, valid_sync2;
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         sample_l_sync0 <= '0;
