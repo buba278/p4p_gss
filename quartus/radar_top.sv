@@ -1,11 +1,9 @@
 // radar_top.sv — DE2-115 top-level for Doppler radar DSP pipeline
 // device: Cyclone IV E EP4CE115F29C7
-
 // this file only contains wires and instantiations.
 // all logic lives in sub-modules.
 
 module radar_top (
-
     // main board clock
     input  logic        CLOCK_50,       // 50 MHz crystal, PIN_Y2
 
@@ -32,12 +30,22 @@ module radar_top (
 // internal wires — declared here because only the top level sees across modules
 logic        pll_locked;    // audio_pll -> wm8731_i2c_init reset, and debug LED
 logic        clk_12m;       // 12.000 MHz AUD_XCK from PLL (USB mode)
-logic        init_done;     // wm8731_i2c_init → i2s_rx reset gating
-logic [23:0] sample_l;      // i2s_rx → DSP pipeline
+logic        init_done;     // wm8731_i2c_init -> i2s_rx reset gating
+logic        nack_error;    // wm8731_i2c_init I2C ack failure
+logic [23:0] sample_l;      // i2s_rx -> DSP pipeline
 logic        valid_l;       // one-cycle pulse when sample_l is fresh
 
+// overlap_buffer -> fft IP (fft IP not yet implemented)
+localparam int FFT_N = 4096;
+logic                        fft_start;
+logic [23:0]                 fft_data;
+logic [$clog2(FFT_N)-1:0]    fft_addr;
+logic                        fft_data_valid;
+logic                        fft_last;
+logic                        fft_overrun;
+
 // == instantiations ==
-// 
+
 // PLL - 50 MHz -> 12.000 MHz for AUD_XCK (USB mode)
 // 'locked' goes high once the PLL has phase-locked — use it as reset release.
 // equiv of audio_pll_inst.v file generated with IP catalogue ALTPLL
@@ -47,17 +55,15 @@ audio_pll audio_pll_inst (
     .c0     (clk_12m),
     .locked (pll_locked)
 );
-
 assign AUD_XCK = clk_12m;
-
 
 // WM8731 audio codec I2C initialisation sequencer
 wm8731_i2c_init i2c_init_inst (
-    .clk       (CLOCK_50),
-    .rst_n     (pll_locked), // dont send I2C till clock stable
-    .scl       (I2C_SCLK),
-    .sda       (I2C_SDAT),
-    .init_done (init_done),
+    .clk        (CLOCK_50),
+    .rst_n      (pll_locked), // dont send I2C till clock stable
+    .scl        (I2C_SCLK),
+    .sda        (I2C_SDAT),
+    .init_done  (init_done),
     .nack_error (nack_error)
 );
 assign AUD_DACDAT = 1'b0;       // DAC is powered down
@@ -73,13 +79,34 @@ i2s_rx i2s_rx_inst (
     .valid_l  (valid_l)
 );
 
-// DSP
+// == DSP ==
+
+// sliding-window overlap buffer: N=4096 (resolution), HOP_DIV=2 -> 50% overlap (latency)
+overlap_buffer #(
+    .N       (FFT_N),
+    .HOP_DIV (2)
+) overlap_buffer_inst (
+    .clk            (CLOCK_50),
+    .rst_n          (init_done),   // same reset domain as i2s_rx — don't fill buffer with garbage pre-codec-init
+    .valid_l        (valid_l),
+    .sample_l       (sample_l),
+    .fft_start      (fft_start),
+    .fft_data       (fft_data),
+    .fft_addr       (fft_addr),
+    .fft_data_valid (fft_data_valid),
+    .fft_last       (fft_last),
+    .fft_overrun    (fft_overrun)
+);
+
 // TODO: instantiate dc_remove, window, fft, cfar, peak_detect
+// fft IP will consume fft_data/fft_addr/fft_data_valid/fft_last, triggered by fft_start
 
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
 assign LEDG[1] = init_done;    // green: codec configured
 assign LEDG[8:2] = '0;
-assign LEDR = '0;
+
+assign LEDR[0] = fft_overrun;  // red: overlap_buffer tried to start a new window before FFT read the last one
+assign LEDR[17:1] = '0;
 
 endmodule
