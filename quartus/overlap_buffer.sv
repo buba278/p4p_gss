@@ -15,28 +15,31 @@ module overlap_buffer #(
     input logic [23:0] sample_l,
 
     // FFT IP 
-    output logic fft_start,                             // effectively a fft reset
+    output logic fft_start,                // effectively a fft reset
     output logic [23:0] fft_data,
-    output logic [$clog2(N)-1] fft_addr [$clog(N)-1:0], // pos within hamming window coefficients
+    output logic [$clog2(N)-1:0] fft_addr, // pos within hamming window coefficients
     output logic fft_data_valid,
-    output logic fft_last,                              // fft_data is the last sample before data invalid (why I need this?)
+    output logic fft_last,                 // fft_data is the last sample before data invalid (why I need this?)
 
     // FFT diagnostic error
-    output logic fft_overrun                            // if writing is ready before FFT completed
+    output logic fft_overrun // if writing is ready before FFT completed (stays latched)
 );
     localparam int HOP = N / HOP_DIV; // hop size
 
     // bit widths
-    localparam int ADDR_W = $clog2(2*N); // mirror depth 
-    localparam int PTR_W = $clog2(N);
+    localparam int BUF_W = $clog2(2*N); // note: mirrored
+    localparam int FFT_W = $clog2(N);
     localparam int HOP_W = $clog2(HOP);
 
     logic [23:0] ram [0:(2*N)-1];
 
     // -- write side --
-    logic [PTR_W-1:0] wr_ptr;
+    logic [FFT_W-1:0] wr_ptr;
     logic [HOP_W-1:0] hop_cnt;
-    logic [PTR_W-1:0] window_base;
+    logic [FFT_W-1:0] window_base;
+
+    logic initialised; // flag for if buffer (N) fully filled at startup
+    logic [FFT_W-1:0] init_cnt;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -58,13 +61,25 @@ module overlap_buffer #(
                 else
                     wr_ptr <= wr_ptr + 1'b1;
     
-                // have gotten enough samples to trigger fft
-                if (hop_cnt == HOP-1) begin
-                    hop_cnt     <= '0;
-                    window_base <= (wr_ptr == N-1) ? '0 : (wr_ptr + 1'b1);
-                    fft_start   <= 1'b1;
+                // at startup, no FFT compute without filling all buffer values once
+                if (!initialised) begin
+                    if (warmup_cnt == N-1) begin
+                        initialised <= 1'b1;
+                        hop_cnt     <= '0;
+                        window_base <= '0; // first full window starts at 0
+                        fft_start   <= 1'b1;
+                    end else begin
+                        warmup_cnt <= warmup_cnt + 1'b1;
+                    end
                 end else begin
-                    hop_cnt <= hop_cnt + 1'b1;
+                    // have gotten enough samples to trigger FFT
+                    if (hop_cnt == HOP-1) begin
+                        hop_cnt     <= '0;
+                        window_base <= (wr_ptr == N-1) ? '0 : (wr_ptr + 1'b1);
+                        fft_start   <= 1'b1;
+                    end else begin
+                        hop_cnt <= hop_cnt + 1'b1;
+                    end
                 end
             end
         end
@@ -73,8 +88,8 @@ module overlap_buffer #(
     // -- read side --
     typedef enum logic [1:0] {R_IDLE, R_BURST_READ} rstate_t;
     rstate_t rstate; // read state - 
-    logic [PTR_W-1:0] rd_cnt;
-    logic [ADDR_W-1:0] rd_addr;
+    logic [FFT_W-1:0] rd_cnt;
+    logic [BUF_W-1:0] rd_addr;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -116,6 +131,8 @@ module overlap_buffer #(
         end
     end
 
-    assign fft_overrun = ffstart & (rstate != R_IDLE);
-    
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) fft_overrun <= '0;
+        else if (fft_start && (rstate != R_IDLE)) fft_overrun <= 1'b1;
+    end
 endmodule
