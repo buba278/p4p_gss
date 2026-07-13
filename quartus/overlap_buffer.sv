@@ -1,5 +1,6 @@
 // overlap_buffer.sv - sliding window buffer
-// currently using simpler mirrored design for tradeoff of logic simplicity
+// currently using simpler mirrored design for tradeoff of logic simplicity:
+// - lets your increment over boundary rather than wrapping around (no mux on addr input to fft)
 // NOTE: might need to change if go for cheaper FPGA chip
 
 module overlap_buffer #(
@@ -13,18 +14,22 @@ module overlap_buffer #(
     input logic valid_l,
     input logic [23:0] sample_l,
 
-    output logic fft_start,
+    // FFT IP 
+    output logic fft_start,                             // effectively a fft reset
     output logic [23:0] fft_data,
-    output logic [$clog2(N)-1] fft_addr, // pos within window
+    output logic [$clog2(N)-1] fft_addr [$clog(N)-1:0], // pos within hamming window coefficients
     output logic fft_data_valid,
-    output logic fft_last
+    output logic fft_last,                              // fft_data is the last sample before data invalid (why I need this?)
+
+    // FFT diagnostic error
+    output logic fft_overrun                            // if writing is ready before FFT completed
 );
     localparam int HOP = N / HOP_DIV; // hop size
 
     // bit widths
-    localparam int ADDR_W = $clog2(2*N); // why *2? I dont get depth 8192
+    localparam int ADDR_W = $clog2(2*N); // mirror depth 
     localparam int PTR_W = $clog2(N);
-    localparam int HOP_W = $clow2(HOP);
+    localparam int HOP_W = $clog2(HOP);
 
     logic [23:0] ram [0:(2*N)-1];
 
@@ -38,9 +43,9 @@ module overlap_buffer #(
             wr_ptr      <= '0;
             hop_cnt     <= '0;
             window_base <= '0;
-            fft_start   <= 1'b0;
+            fft_start   <= '0;
         end else begin
-            fft_start <= 1'b0;
+            fft_start <= '0;
     
             if (valid_l) begin
                 // mirroring
@@ -66,5 +71,51 @@ module overlap_buffer #(
     end
 
     // -- read side --
+    typedef enum logic [1:0] {R_IDLE, R_BURST_READ} rstate_t;
+    rstate_t rstate; // read state - 
+    logic [PTR_W-1:0] rd_cnt;
+    logic [ADDR_W-1:0] rd_addr;
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            rstate         <= R_IDLE;
+            rd_cnt         <= '0;
+            fft_data_valid <= '0;
+            fft_last       <= '0;
+            fft_data       <= '0;
+            fft_addr       <= '0;
+        end else begin
+            fft_data_valid <= '0;
+            fft_last       <= '0;
+
+            case (rstate)
+                // waiting for hop to be filled
+                R_IDLE: begin
+                    if (fft_start) begin
+                        rd_addr <= window_base;
+                        rd_cnt  <= '0;
+                        rstate  <= R_BURST_READ;
+                    end
+                end
+                R_BURST_READ: begin
+                    // set start based one where written (mirror dep logic)
+                    fft_data       <= ram[rd_addr];
+                    fft_addr       <= rd_cnt;
+                    fft_data_valid <= 1'b1;
+                    fft_last       <= (rd_cnt == N-1);
+
+                    // read enough for full fft
+                    if (rd_cnt == N-1) begin
+                        rstate <= R_IDLE;
+                    end else begin
+                        rd_cnt  <= rd_cnt + 1'b1;
+                        rd_addr <= rd_addr + 1'b1;
+                    end
+                end
+            endcase    
+        end
+    end
+
+    assign fft_overrun = ffstart & (rstate != R_IDLE);
     
 endmodule
