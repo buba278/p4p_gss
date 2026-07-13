@@ -63,13 +63,13 @@ module overlap_buffer #(
     
                 // at startup, no FFT compute without filling all buffer values once
                 if (!initialised) begin
-                    if (warmup_cnt == N-1) begin
+                    if (init_cnt == N-1) begin
                         initialised <= 1'b1;
                         hop_cnt     <= '0;
                         window_base <= '0; // first full window starts at 0
                         fft_start   <= 1'b1;
                     end else begin
-                        warmup_cnt <= warmup_cnt + 1'b1;
+                        init_cnt <= init_cnt + 1'b1;
                     end
                 end else begin
                     // have gotten enough samples to trigger FFT
