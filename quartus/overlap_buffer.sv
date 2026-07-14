@@ -19,7 +19,8 @@ module overlap_buffer #(
     output logic [23:0] fft_data,
     output logic [$clog2(N)-1:0] fft_addr, // pos within hamming window coefficients
     output logic fft_data_valid,
-    output logic fft_last,                 // fft_data is the last sample before data invalid (why I need this?)
+    output logic fft_first,                // fft_data is the first sample this frame (sink_sop)
+    output logic fft_last,                 // fft_data is the last sample this frame (sink_eop)
 
     // FFT diagnostic error
     output logic fft_overrun // if writing is ready before FFT completed (stays latched)
@@ -96,11 +97,13 @@ module overlap_buffer #(
             rstate         <= R_IDLE;
             rd_cnt         <= '0;
             fft_data_valid <= '0;
+            fft_first      <= '0;
             fft_last       <= '0;
             fft_data       <= '0;
             fft_addr       <= '0;
         end else begin
             fft_data_valid <= '0;
+            fft_first      <= '0;
             fft_last       <= '0;
 
             case (rstate)
@@ -117,6 +120,7 @@ module overlap_buffer #(
                     fft_data       <= ram[rd_addr];
                     fft_addr       <= rd_cnt;
                     fft_data_valid <= 1'b1;
+                    fft_first      <= (rd_cnt == '0);
                     fft_last       <= (rd_cnt == N-1);
 
                     // read enough for full fft

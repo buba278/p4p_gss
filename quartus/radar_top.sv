@@ -41,6 +41,7 @@ logic                        fft_start;
 logic [23:0]                 fft_data;
 logic [$clog2(FFT_N)-1:0]    fft_addr;
 logic                        fft_data_valid;
+logic                        fft_first;
 logic                        fft_last;
 logic                        fft_overrun;
 
@@ -94,6 +95,7 @@ overlap_buffer #(
     .fft_data       (fft_data),
     .fft_addr       (fft_addr),
     .fft_data_valid (fft_data_valid),
+    .fft_first      (fft_first),
     .fft_last       (fft_last),
     .fft_overrun    (fft_overrun)
 );
