@@ -1,7 +1,5 @@
 // overlap_buffer.sv - sliding window buffer
-// currently using simpler mirrored design for tradeoff of logic simplicity:
-// - lets your increment over boundary rather than wrapping around (no mux on addr input to fft)
-// NOTE: might need to change if go for cheaper FPGA chip
+// single N-deep RAM, one write port / one read port (infers to M9K block RAM)
 
 module overlap_buffer #(
     parameter int N = 4096,   // FFT window length - resolution
@@ -28,11 +26,10 @@ module overlap_buffer #(
     localparam int HOP = N / HOP_DIV; // hop size
 
     // bit widths
-    localparam int BUF_W = $clog2(2*N); // note: mirrored
     localparam int FFT_W = $clog2(N);
     localparam int HOP_W = $clog2(HOP);
 
-    logic [23:0] ram [0:(2*N)-1];
+    logic [23:0] ram [0:N-1];
 
     // -- write side --
     logic [FFT_W-1:0] wr_ptr;
@@ -48,13 +45,13 @@ module overlap_buffer #(
             hop_cnt     <= '0;
             window_base <= '0;
             fft_start   <= '0;
+            initialised <= '0;
+            init_cnt    <= '0;
         end else begin
             fft_start <= '0;
     
             if (valid_l) begin
-                // mirroring
-                ram[wr_ptr]     <= sample_l;
-                ram[wr_ptr + N] <= sample_l;
+                ram[wr_ptr] <= sample_l;
     
                 // cycle the buffer
                 if (wr_ptr == N-1)
@@ -88,9 +85,9 @@ module overlap_buffer #(
 
     // -- read side --
     typedef enum logic [1:0] {R_IDLE, R_BURST_READ} rstate_t;
-    rstate_t rstate; // read state - 
+    rstate_t rstate; // read state
     logic [FFT_W-1:0] rd_cnt;
-    logic [BUF_W-1:0] rd_addr;
+    logic [FFT_W-1:0] rd_addr;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -116,7 +113,6 @@ module overlap_buffer #(
                     end
                 end
                 R_BURST_READ: begin
-                    // set start based one where written (mirror dep logic)
                     fft_data       <= ram[rd_addr];
                     fft_addr       <= rd_cnt;
                     fft_data_valid <= 1'b1;
@@ -128,7 +124,7 @@ module overlap_buffer #(
                         rstate <= R_IDLE;
                     end else begin
                         rd_cnt  <= rd_cnt + 1'b1;
-                        rd_addr <= rd_addr + 1'b1;
+                        rd_addr <= (rd_addr == N-1) ? '0 : (rd_addr + 1'b1); // wrap
                     end
                 end
             endcase    
