@@ -8,8 +8,8 @@ set_global_assignment -name DEVICE EP4CE115F29C7
 set_global_assignment -name TOP_LEVEL_ENTITY radar_top
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
-set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
-set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_global_assignment -name EDA_SIMULATION_TOOL "<None>"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT NONE -section_id eda_simulation
 
 # ---------------------------------------------------------------------------
 # Clock (50 MHz)
@@ -85,122 +85,212 @@ set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_RO
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+set_global_assignment -name ENABLE_SIGNALTAP ON
+set_global_assignment -name USE_SIGNALTAP_FILE stp1.stp
+
+set_global_assignment -name SYSTEMVERILOG_FILE hamming_window.sv
+set_global_assignment -name QSYS_FILE fft_ip.qsys
+set_global_assignment -name SYSTEMVERILOG_FILE overlap_buffer.sv
 set_global_assignment -name SDC_FILE radar_top.sdc
 set_global_assignment -name QIP_FILE audio_pll.qip
 set_global_assignment -name SYSTEMVERILOG_FILE radar_top.sv
 set_global_assignment -name SYSTEMVERILOG_FILE wm8731_i2c_init.sv
 set_global_assignment -name SYSTEMVERILOG_FILE i2s_rx.sv
 set_global_assignment -name VERILOG_FILE audio_pll.v
-set_global_assignment -name ENABLE_SIGNALTAP ON
-set_global_assignment -name USE_SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SIGNALTAP_FILE stp1.stp
-set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "i2s_rx:i2s_rx_inst|valid_l" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to "i2s_rx:i2s_rx_inst|sample_l[0]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to "i2s_rx:i2s_rx_inst|sample_l[10]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "i2s_rx:i2s_rx_inst|sample_l[11]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "i2s_rx:i2s_rx_inst|sample_l[12]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "i2s_rx:i2s_rx_inst|sample_l[13]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "i2s_rx:i2s_rx_inst|sample_l[14]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "i2s_rx:i2s_rx_inst|sample_l[15]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "i2s_rx:i2s_rx_inst|sample_l[16]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "i2s_rx:i2s_rx_inst|sample_l[17]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "i2s_rx:i2s_rx_inst|sample_l[18]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "i2s_rx:i2s_rx_inst|sample_l[19]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "i2s_rx:i2s_rx_inst|sample_l[1]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "i2s_rx:i2s_rx_inst|sample_l[20]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "i2s_rx:i2s_rx_inst|sample_l[21]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "i2s_rx:i2s_rx_inst|sample_l[22]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "i2s_rx:i2s_rx_inst|sample_l[23]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "i2s_rx:i2s_rx_inst|sample_l[2]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "i2s_rx:i2s_rx_inst|sample_l[3]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "i2s_rx:i2s_rx_inst|sample_l[4]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "i2s_rx:i2s_rx_inst|sample_l[5]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "i2s_rx:i2s_rx_inst|sample_l[6]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "i2s_rx:i2s_rx_inst|sample_l[7]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "i2s_rx:i2s_rx_inst|sample_l[8]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "i2s_rx:i2s_rx_inst|sample_l[9]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to "i2s_rx:i2s_rx_inst|sample_l[0]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to "i2s_rx:i2s_rx_inst|sample_l[10]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "i2s_rx:i2s_rx_inst|sample_l[11]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "i2s_rx:i2s_rx_inst|sample_l[12]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "i2s_rx:i2s_rx_inst|sample_l[13]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "i2s_rx:i2s_rx_inst|sample_l[14]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "i2s_rx:i2s_rx_inst|sample_l[15]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "i2s_rx:i2s_rx_inst|sample_l[16]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "i2s_rx:i2s_rx_inst|sample_l[17]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "i2s_rx:i2s_rx_inst|sample_l[18]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "i2s_rx:i2s_rx_inst|sample_l[19]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "i2s_rx:i2s_rx_inst|sample_l[1]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "i2s_rx:i2s_rx_inst|sample_l[20]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "i2s_rx:i2s_rx_inst|sample_l[21]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "i2s_rx:i2s_rx_inst|sample_l[22]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "i2s_rx:i2s_rx_inst|sample_l[23]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "i2s_rx:i2s_rx_inst|sample_l[2]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "i2s_rx:i2s_rx_inst|sample_l[3]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "i2s_rx:i2s_rx_inst|sample_l[4]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "i2s_rx:i2s_rx_inst|sample_l[5]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "i2s_rx:i2s_rx_inst|sample_l[6]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "i2s_rx:i2s_rx_inst|sample_l[7]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "i2s_rx:i2s_rx_inst|sample_l[8]" -section_id samples_on_valid
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "i2s_rx:i2s_rx_inst|sample_l[9]" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_RAM_BLOCK_TYPE=AUTO" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=24" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=24" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_BITS=24" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_INFO=805334529" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_POWER_UP_TRIGGER=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=98" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_INVERSION_MASK_LENGTH=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=4096" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ATTRIBUTE_MEM_MODE=OFF" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_FLOW_USE_GENERATED=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_BITS=11" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_BUFFER_FULL_STOP=1" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_CURRENT_RESOURCE_WIDTH=1" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INCREMENTAL_ROUTING=1" -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[0] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[1] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[2] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[3] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[4] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[5] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[6] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[7] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[8] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[9] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[10] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[11] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[12] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[13] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[14] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[15] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[16] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[17] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[18] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[19] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[20] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[21] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[22] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[23] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[24] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[25] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[26] -to samples_on_valid|gnd -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[27] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[28] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[29] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[30] -to samples_on_valid|vcc -section_id samples_on_valid
-set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[31] -to samples_on_valid|vcc -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL=1" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=4096" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLED=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_PIPELINE=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_RAM_PIPELINE=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_COUNTER_PIPELINE=0" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id samples_on_valid
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id samples_on_valid
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE fft_ip/fft_ip_inst.v
+set_global_assignment -name VERILOG_FILE fft_ip/fft_ip_bb.v
+set_global_assignment -name QIP_FILE rom_ip.qip
+set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "fft_ip:fft_ip_inst|source_sop" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to "fft_ip:fft_ip_inst|source_imag[0]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to "fft_ip:fft_ip_inst|source_imag[10]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "fft_ip:fft_ip_inst|source_imag[11]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "fft_ip:fft_ip_inst|source_imag[12]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "fft_ip:fft_ip_inst|source_imag[13]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "fft_ip:fft_ip_inst|source_imag[14]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "fft_ip:fft_ip_inst|source_imag[15]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "fft_ip:fft_ip_inst|source_imag[16]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "fft_ip:fft_ip_inst|source_imag[17]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "fft_ip:fft_ip_inst|source_imag[18]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "fft_ip:fft_ip_inst|source_imag[19]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "fft_ip:fft_ip_inst|source_imag[1]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "fft_ip:fft_ip_inst|source_imag[20]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "fft_ip:fft_ip_inst|source_imag[21]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "fft_ip:fft_ip_inst|source_imag[22]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "fft_ip:fft_ip_inst|source_imag[23]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "fft_ip:fft_ip_inst|source_imag[24]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "fft_ip:fft_ip_inst|source_imag[25]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "fft_ip:fft_ip_inst|source_imag[26]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "fft_ip:fft_ip_inst|source_imag[27]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "fft_ip:fft_ip_inst|source_imag[28]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "fft_ip:fft_ip_inst|source_imag[29]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "fft_ip:fft_ip_inst|source_imag[2]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "fft_ip:fft_ip_inst|source_imag[30]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[24] -to "fft_ip:fft_ip_inst|source_imag[31]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[25] -to "fft_ip:fft_ip_inst|source_imag[3]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[26] -to "fft_ip:fft_ip_inst|source_imag[4]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[27] -to "fft_ip:fft_ip_inst|source_imag[5]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[28] -to "fft_ip:fft_ip_inst|source_imag[6]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[29] -to "fft_ip:fft_ip_inst|source_imag[7]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[30] -to "fft_ip:fft_ip_inst|source_imag[8]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[31] -to "fft_ip:fft_ip_inst|source_imag[9]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[32] -to "fft_ip:fft_ip_inst|source_real[0]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[33] -to "fft_ip:fft_ip_inst|source_real[10]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[34] -to "fft_ip:fft_ip_inst|source_real[11]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[35] -to "fft_ip:fft_ip_inst|source_real[12]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[36] -to "fft_ip:fft_ip_inst|source_real[13]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[37] -to "fft_ip:fft_ip_inst|source_real[14]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[38] -to "fft_ip:fft_ip_inst|source_real[15]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[39] -to "fft_ip:fft_ip_inst|source_real[16]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[40] -to "fft_ip:fft_ip_inst|source_real[17]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[41] -to "fft_ip:fft_ip_inst|source_real[18]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[42] -to "fft_ip:fft_ip_inst|source_real[19]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[43] -to "fft_ip:fft_ip_inst|source_real[1]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[44] -to "fft_ip:fft_ip_inst|source_real[20]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[45] -to "fft_ip:fft_ip_inst|source_real[21]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[46] -to "fft_ip:fft_ip_inst|source_real[22]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[47] -to "fft_ip:fft_ip_inst|source_real[23]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[48] -to "fft_ip:fft_ip_inst|source_real[24]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[49] -to "fft_ip:fft_ip_inst|source_real[25]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[50] -to "fft_ip:fft_ip_inst|source_real[26]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[51] -to "fft_ip:fft_ip_inst|source_real[27]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[52] -to "fft_ip:fft_ip_inst|source_real[28]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[53] -to "fft_ip:fft_ip_inst|source_real[29]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[54] -to "fft_ip:fft_ip_inst|source_real[2]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[55] -to "fft_ip:fft_ip_inst|source_real[30]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[56] -to "fft_ip:fft_ip_inst|source_real[31]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[57] -to "fft_ip:fft_ip_inst|source_real[3]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[58] -to "fft_ip:fft_ip_inst|source_real[4]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[59] -to "fft_ip:fft_ip_inst|source_real[5]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[60] -to "fft_ip:fft_ip_inst|source_real[6]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[61] -to "fft_ip:fft_ip_inst|source_real[7]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[62] -to "fft_ip:fft_ip_inst|source_real[8]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[63] -to "fft_ip:fft_ip_inst|source_real[9]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[64] -to "fft_ip:fft_ip_inst|source_valid" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to "fft_ip:fft_ip_inst|source_imag[0]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to "fft_ip:fft_ip_inst|source_imag[10]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "fft_ip:fft_ip_inst|source_imag[11]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "fft_ip:fft_ip_inst|source_imag[12]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "fft_ip:fft_ip_inst|source_imag[13]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "fft_ip:fft_ip_inst|source_imag[14]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "fft_ip:fft_ip_inst|source_imag[15]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "fft_ip:fft_ip_inst|source_imag[16]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "fft_ip:fft_ip_inst|source_imag[17]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "fft_ip:fft_ip_inst|source_imag[18]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "fft_ip:fft_ip_inst|source_imag[19]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "fft_ip:fft_ip_inst|source_imag[1]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "fft_ip:fft_ip_inst|source_imag[20]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "fft_ip:fft_ip_inst|source_imag[21]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "fft_ip:fft_ip_inst|source_imag[22]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "fft_ip:fft_ip_inst|source_imag[23]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "fft_ip:fft_ip_inst|source_imag[24]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "fft_ip:fft_ip_inst|source_imag[25]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "fft_ip:fft_ip_inst|source_imag[26]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "fft_ip:fft_ip_inst|source_imag[27]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "fft_ip:fft_ip_inst|source_imag[28]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "fft_ip:fft_ip_inst|source_imag[29]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "fft_ip:fft_ip_inst|source_imag[2]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "fft_ip:fft_ip_inst|source_imag[30]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[24] -to "fft_ip:fft_ip_inst|source_imag[31]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[25] -to "fft_ip:fft_ip_inst|source_imag[3]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[26] -to "fft_ip:fft_ip_inst|source_imag[4]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[27] -to "fft_ip:fft_ip_inst|source_imag[5]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[28] -to "fft_ip:fft_ip_inst|source_imag[6]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -to "fft_ip:fft_ip_inst|source_imag[7]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "fft_ip:fft_ip_inst|source_imag[8]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "fft_ip:fft_ip_inst|source_imag[9]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "fft_ip:fft_ip_inst|source_real[0]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[33] -to "fft_ip:fft_ip_inst|source_real[10]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[34] -to "fft_ip:fft_ip_inst|source_real[11]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[35] -to "fft_ip:fft_ip_inst|source_real[12]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[36] -to "fft_ip:fft_ip_inst|source_real[13]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[37] -to "fft_ip:fft_ip_inst|source_real[14]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[38] -to "fft_ip:fft_ip_inst|source_real[15]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[39] -to "fft_ip:fft_ip_inst|source_real[16]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[40] -to "fft_ip:fft_ip_inst|source_real[17]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[41] -to "fft_ip:fft_ip_inst|source_real[18]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[42] -to "fft_ip:fft_ip_inst|source_real[19]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[43] -to "fft_ip:fft_ip_inst|source_real[1]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[44] -to "fft_ip:fft_ip_inst|source_real[20]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[45] -to "fft_ip:fft_ip_inst|source_real[21]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[46] -to "fft_ip:fft_ip_inst|source_real[22]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[47] -to "fft_ip:fft_ip_inst|source_real[23]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[48] -to "fft_ip:fft_ip_inst|source_real[24]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[49] -to "fft_ip:fft_ip_inst|source_real[25]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[50] -to "fft_ip:fft_ip_inst|source_real[26]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[51] -to "fft_ip:fft_ip_inst|source_real[27]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[52] -to "fft_ip:fft_ip_inst|source_real[28]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[53] -to "fft_ip:fft_ip_inst|source_real[29]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[54] -to "fft_ip:fft_ip_inst|source_real[2]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[55] -to "fft_ip:fft_ip_inst|source_real[30]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[56] -to "fft_ip:fft_ip_inst|source_real[31]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[57] -to "fft_ip:fft_ip_inst|source_real[3]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[58] -to "fft_ip:fft_ip_inst|source_real[4]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[59] -to "fft_ip:fft_ip_inst|source_real[5]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[60] -to "fft_ip:fft_ip_inst|source_real[6]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[61] -to "fft_ip:fft_ip_inst|source_real[7]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[62] -to "fft_ip:fft_ip_inst|source_real[8]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[63] -to "fft_ip:fft_ip_inst|source_real[9]" -section_id fft_ip_test
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[64] -to "fft_ip:fft_ip_inst|source_valid" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_RAM_BLOCK_TYPE=AUTO" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=65" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=65" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_BITS=65" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_INFO=805334530" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_POWER_UP_TRIGGER=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_INVERSION_MASK_LENGTH=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ATTRIBUTE_MEM_MODE=OFF" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_FLOW_USE_GENERATED=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_BITS=11" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_BUFFER_FULL_STOP=1" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_CURRENT_RESOURCE_WIDTH=1" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INCREMENTAL_ROUTING=1" -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[0] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[1] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[2] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[3] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[4] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[5] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[6] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[7] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[8] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[9] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[10] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[11] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[12] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[13] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[14] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[15] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[17] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[19] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[22] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[24] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[25] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[26] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[29] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[31] -to fft_ip_test|vcc -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL=1" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLED=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_PIPELINE=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_RAM_PIPELINE=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_COUNTER_PIPELINE=0" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id fft_ip_test
+set_global_assignment -name SMART_RECOMPILE ON
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=216" -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=128" -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[16] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[18] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[20] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[21] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[23] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[27] -to fft_ip_test|vcc -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[28] -to fft_ip_test|gnd -section_id fft_ip_test
+set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[30] -to fft_ip_test|gnd -section_id fft_ip_test
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=128" -section_id fft_ip_test
 set_global_assignment -name SLD_FILE db/stp1_auto_stripped.stp
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

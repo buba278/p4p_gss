@@ -35,14 +35,27 @@ logic        nack_error;    // wm8731_i2c_init I2C ack failure
 logic [23:0] sample_l;      // i2s_rx -> DSP pipeline
 logic        valid_l;       // one-cycle pulse when sample_l is fresh
 
-// overlap_buffer -> fft IP (fft IP not yet implemented)
+// overlap_buffer -> hamming_window
 localparam int FFT_N = 4096;
 logic                        fft_start;
 logic [23:0]                 fft_data;
 logic [$clog2(FFT_N)-1:0]    fft_addr;
 logic                        fft_data_valid;
+logic                        fft_first;
 logic                        fft_last;
 logic                        fft_overrun;
+
+// hamming_window -> fft_ip (Avalon-ST sink side)
+logic                sink_valid, sink_ready, sink_sop, sink_eop;
+logic [1:0]          sink_error;
+logic [23:0]         sink_real, sink_imag;
+logic                fft_sink_stall;
+
+// fft_ip -> (next stage, not yet built) (Avalon-ST source side)
+logic                source_valid, source_ready, source_sop, source_eop;
+logic [1:0]          source_error;
+logic [23:0]         source_real, source_imag;
+logic [5:0]          source_exp;
 
 // == instantiations ==
 
@@ -94,19 +107,66 @@ overlap_buffer #(
     .fft_data       (fft_data),
     .fft_addr       (fft_addr),
     .fft_data_valid (fft_data_valid),
+    .fft_first      (fft_first),
     .fft_last       (fft_last),
     .fft_overrun    (fft_overrun)
 );
 
-// TODO: instantiate dc_remove, window, fft, cfar, peak_detect
-// fft IP will consume fft_data/fft_addr/fft_data_valid/fft_last, triggered by fft_start
+// Hamming windowing, coefficients from rom_ip (hamming_window.mif)
+hamming_window #(
+    .N (FFT_N)
+) hamming_window_inst (
+    .clk            (CLOCK_50),
+    .rst_n          (init_done),
+    .fft_data       (fft_data),
+    .fft_addr       (fft_addr),
+    .fft_data_valid (fft_data_valid),
+    .fft_first      (fft_first),
+    .fft_last       (fft_last),
+    .sink_valid     (sink_valid),
+    .sink_ready     (sink_ready),
+    .sink_error     (sink_error),
+    .sink_sop       (sink_sop),
+    .sink_eop       (sink_eop),
+    .sink_real      (sink_real),
+    .sink_imag      (sink_imag),
+    .fft_sink_stall (fft_sink_stall)
+);
+
+// FFT IP: N=4096, burst, natural in/out, block floating point out, 24bit in/out 
+assign source_ready = 1'b1; // TODO: drive from next stage once it exists
+
+fft_ip fft_ip_inst (
+    .clk          (CLOCK_50),
+    .reset_n      (init_done),
+    .sink_valid   (sink_valid),
+    .sink_ready   (sink_ready),
+    .sink_error   (sink_error),
+    .sink_sop     (sink_sop),
+    .sink_eop     (sink_eop),
+    .sink_real    (sink_real),
+    .sink_imag    (sink_imag),
+    .inverse      (1'b0),       // forward transform only
+    .source_valid (source_valid),
+    .source_ready (source_ready),
+    .source_error (source_error),
+    .source_sop   (source_sop),
+    .source_eop   (source_eop),
+    .source_real  (source_real),
+    .source_imag  (source_imag),
+    .source_exp   (source_exp)
+);
+
+// TODO: instantiate cfar, peak_detect — consumes source_real/source_imag
+// (bit-reversed order — see output-order note from the FFT IP wizard config)
 
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
 assign LEDG[1] = init_done;    // green: codec configured
 assign LEDG[8:2] = '0;
 
-assign LEDR[0] = fft_overrun;  // red: overlap_buffer tried to start a new window before FFT read the last one
-assign LEDR[17:1] = '0;
+assign LEDR[0] = fft_overrun;     // red: overlap_buffer tried to start a new window before FFT read the last one
+assign LEDR[1] = fft_sink_stall;  // red: hamming_window presented data the FFT IP didn't accept
+assign LEDR[17:2] = '0;
 
 endmodule
