@@ -158,7 +158,6 @@ fft_ip fft_ip_inst (
 );
 
 // TODO: instantiate cfar, peak_detect — consumes source_real/source_imag
-// (bit-reversed order — see output-order note from the FFT IP wizard config)
 
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
