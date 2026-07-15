@@ -15,7 +15,6 @@
 module fft_ip_fft_ii_0 (
    input clk, 
    input reset_n,
-	input [12 : 0] fftpts_in,
 	input	[0 : 0] inverse,
 	input	sink_valid,
 	input	sink_sop,
@@ -24,38 +23,44 @@ module fft_ip_fft_ii_0 (
 	input	logic [23 : 0] sink_imag,
 	input	logic [1 : 0] sink_error,
 	input	source_ready,
-   output [12 : 0] fftpts_out,
+   output [5 : 0] source_exp,
 	output sink_ready,
 	output [1 : 0] source_error,
 	output source_sop,
 	output source_eop,
 	output source_valid,
-	output [31 : 0] source_real,
-	output [31 : 0] source_imag
+	output [23 : 0] source_real,
+	output [23 : 0] source_imag
 	);
 
-	auk_dspip_r22sdf_top #(
-		.DEVICE_FAMILY_g("Cyclone IV E"),
-		.MAX_FFTPTS_g(4096),
-		.NUM_STAGES_g(6),
-		.DATAWIDTH_g(24),
-		.TWIDWIDTH_g(24),
-		.MAX_GROW_g (8),
-		.TWIDROM_BASE_g("fft_ip_fft_ii_0_"),
-		.DSP_ROUNDING_g(0),
-		.INPUT_FORMAT_g("NATURAL_ORDER"),
-		.OUTPUT_FORMAT_g("BIT_REVERSED"),
-		.REPRESENTATION_g("FIXEDPT"),
-		.DSP_ARCH_g(0),
-        .PRUNE_g("2,1,0,0,0,0") 
+	asj_fft_si_sose_so_b #(
+		.device_family("Cyclone IV E"),
+		.nps(4096),
+		.bfp(1),
+		.nume(1),
+		.mpr(24),
+		.twr(24),
+		.bpr(24),
+		.bpb(6),
+		.fpr(4),
+		.mram(0),
+		.m512(0),
+		.mult_type(1),
+		.mult_imp(0),
+		.dsp_arch(0),
+		.srr("AUTO_SHIFT_REGISTER_RECOGNITION=OFF"),
+		.rfs1("fft_ip_fft_ii_0_1n4096sin.hex"),
+		.rfs2("fft_ip_fft_ii_0_2n4096sin.hex"),
+		.rfs3("fft_ip_fft_ii_0_3n4096sin.hex"),
+		.rfc1("fft_ip_fft_ii_0_1n4096cos.hex"),
+		.rfc2("fft_ip_fft_ii_0_2n4096cos.hex"),
+		.rfc3("fft_ip_fft_ii_0_3n4096cos.hex")
 	)
-	auk_dspip_r22sdf_top_inst (
+	asj_fft_si_sose_so_b_inst (
 		.clk(clk),
 		.clk_ena(1'b1),
 		.reset_n(reset_n),
-		.fftpts_in(fftpts_in),
-		.fftpts_out(fftpts_out),
-		.inverse(inverse[0]),
+		.inverse(inverse),
 		.sink_valid(sink_valid),
 		.sink_sop(sink_sop),
 		.sink_eop(sink_eop),
@@ -68,6 +73,7 @@ module fft_ip_fft_ii_0 (
 		.source_sop(source_sop),
 		.source_eop(source_eop),
 		.source_valid(source_valid),
+		.source_exp(source_exp),
 		.source_real(source_real),
 		.source_imag(source_imag)
 	);

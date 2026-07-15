@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploy
- date="2026.07.14.12:38:16"
+ date="2026.07.15.13:31:47"
  outputDirectory="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/">
  <perimeter>
   <parameter
@@ -72,7 +72,6 @@
    <port name="sink_eop" direction="input" role="sink_eop" width="1" />
    <port name="sink_real" direction="input" role="sink_real" width="24" />
    <port name="sink_imag" direction="input" role="sink_imag" width="24" />
-   <port name="fftpts_in" direction="input" role="fftpts_in" width="13" />
    <port name="inverse" direction="input" role="inverse" width="1" />
   </interface>
   <interface name="source" kind="conduit" start="0">
@@ -83,20 +82,20 @@
    <port name="source_error" direction="output" role="source_error" width="2" />
    <port name="source_sop" direction="output" role="source_sop" width="1" />
    <port name="source_eop" direction="output" role="source_eop" width="1" />
-   <port name="source_real" direction="output" role="source_real" width="32" />
-   <port name="source_imag" direction="output" role="source_imag" width="32" />
-   <port name="fftpts_out" direction="output" role="fftpts_out" width="13" />
+   <port name="source_real" direction="output" role="source_real" width="24" />
+   <port name="source_imag" direction="output" role="source_imag" width="24" />
+   <port name="source_exp" direction="output" role="source_exp" width="6" />
   </interface>
  </perimeter>
  <entity
    path=""
-   parameterizationKey="fft_ip:1.0:AUTO_CLK_CLOCK_DOMAIN=-1,AUTO_CLK_CLOCK_RATE=-1,AUTO_CLK_RESET_DOMAIN=-1,AUTO_DEVICE=EP4CE115F29C7,AUTO_DEVICE_FAMILY=Cyclone IV E,AUTO_DEVICE_SPEEDGRADE=7,AUTO_GENERATION_ID=1783989494,AUTO_UNIQUE_ID=(altera_fft_ii:18.1:CALC_LATENCY=4096,THROUGHPUT_LATENCY=4096,data_flow=Variable Streaming,data_rep=Fixed Point,design_env=NATIVE,direction=Bi-directional,dsp_resource_opt=false,engine_arch=Quad Output,hard_fp=false,hyper_opt=false,in_order=Natural,in_width=24,in_width_derived=24,length=4096,num_engines=1,num_engines_derived=1,out_order=Digit Reverse,out_width=32,out_width_derived=32,selected_device_family=Cyclone IV E,twid_width=24,twid_width_derived=24)"
+   parameterizationKey="fft_ip:1.0:AUTO_CLK_CLOCK_DOMAIN=-1,AUTO_CLK_CLOCK_RATE=-1,AUTO_CLK_RESET_DOMAIN=-1,AUTO_DEVICE=EP4CE115F29C7,AUTO_DEVICE_FAMILY=Cyclone IV E,AUTO_DEVICE_SPEEDGRADE=7,AUTO_GENERATION_ID=1784079104,AUTO_UNIQUE_ID=(altera_fft_ii:18.1:CALC_LATENCY=13421,THROUGHPUT_LATENCY=5228,data_flow=Burst,data_rep=Block Floating Point,design_env=NATIVE,direction=Bi-directional,dsp_resource_opt=false,engine_arch=Single Output,hard_fp=false,hyper_opt=false,in_order=Natural,in_width=24,in_width_derived=24,length=4096,num_engines=1,num_engines_derived=1,out_order=Natural,out_width=32,out_width_derived=24,selected_device_family=Cyclone IV E,twid_width=24,twid_width_derived=24)"
    instancePathKey="fft_ip"
    kind="fft_ip"
    version="1.0"
    name="fft_ip">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="-1" />
-  <parameter name="AUTO_GENERATION_ID" value="1783989494" />
+  <parameter name="AUTO_GENERATION_ID" value="1784079104" />
   <parameter name="AUTO_DEVICE" value="EP4CE115F29C7" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone IV E" />
   <parameter name="AUTO_CLK_RESET_DOMAIN" value="-1" />
@@ -110,43 +109,27 @@
   </generatedFiles>
   <childGeneratedFiles>
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi1.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_1n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr4.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_1n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi5.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_2n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr5.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_2n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi2.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_3n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr1.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr2.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi3.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi4.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr3.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_3n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
@@ -174,24 +157,56 @@
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_can.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_sink.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx_1825.v"
-       type="VERILOG"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_source.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_top.ocp"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_controller.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_sglstream.ocp"
        type="OTHER"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/hyper_opt_OFF_pkg.vhd"
-       type="VHDL"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dualstream.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_so_se_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_sose_so_b.ocp"
+       type="OTHER"
        attributes="" />
    <file
        path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/altera_fft_dual_port_ram.vhd"
@@ -222,92 +237,300 @@
        type="SYSTEM_VERILOG"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_lib_pkg.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_pack.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_addr_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_cmult_cpx.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_core.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_cmult_cpx2.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_reverse_carry_adder.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_can.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_adder_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_addsub.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_1dp_ram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bfi.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_1tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bfii.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3dp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bf_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3pi_mram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_adder_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_4dp_ram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_bfi_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_6tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_alt_shift_tdl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_core.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_ctrl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_counter.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_i.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_delay.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_i_1pt.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_enable_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_o.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stage.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_o_1pt.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stg_out_pipe.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stg_pipe.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl_de.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_top.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl_qe.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_twrom.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cmult_can.vhd"
        type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cmult_std.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cnt_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cnt_ctrl_de.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_addr.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data_r.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dataadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_data_ram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_data_ram_dp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dft_bfp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dft_bfp_sgl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dpi_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dp_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dualstream.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_in_write_sgl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lcm_mult.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lcm_mult_2m.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpprdadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpprdadr2gen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp_serial.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp_serial_r2.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_mult_add.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_m_k_counter.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_pround.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_sglstream.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_sose_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_bit.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_bit_rst.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_rst.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadgen_dual.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadsogen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadsogen_q.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twiddle_ctrl_qe.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twid_rom_tdp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl_de.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl_qe.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_sose_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_wrengen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_wrswgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/twid_rom.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx_1825.v"
+       type="VERILOG"
        attributes="" />
    <file
        path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0.sv"
@@ -341,87 +564,67 @@
    <message level="Debug">Transform: ResetAdaptation</message>
    <message level="Debug" culprit="fft_ip"><![CDATA["<b>fft_ip</b>" reuses <b>altera_fft_ii</b> "<b>submodules/fft_ip_fft_ii_0</b>"]]></message>
    <message level="Debug" culprit="fft_ip">queue size: 0 starting:altera_fft_ii "submodules/fft_ip_fft_ii_0"</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi1.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr4.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi5.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr5.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi2.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr1.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr2.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi3.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi4.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr3.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_1n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_1n4096sin.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_2n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_2n4096sin.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_3n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_3n4096sin.hex</message>
    <message level="Info" culprit="fft_ii_0"><![CDATA["<b>fft_ip</b>" instantiated <b>altera_fft_ii</b> "<b>fft_ii_0</b>"]]></message>
   </messages>
  </entity>
  <entity
    path="submodules/"
-   parameterizationKey="altera_fft_ii:18.1:CALC_LATENCY=4096,THROUGHPUT_LATENCY=4096,data_flow=Variable Streaming,data_rep=Fixed Point,design_env=NATIVE,direction=Bi-directional,dsp_resource_opt=false,engine_arch=Quad Output,hard_fp=false,hyper_opt=false,in_order=Natural,in_width=24,in_width_derived=24,length=4096,num_engines=1,num_engines_derived=1,out_order=Digit Reverse,out_width=32,out_width_derived=32,selected_device_family=Cyclone IV E,twid_width=24,twid_width_derived=24"
+   parameterizationKey="altera_fft_ii:18.1:CALC_LATENCY=13421,THROUGHPUT_LATENCY=5228,data_flow=Burst,data_rep=Block Floating Point,design_env=NATIVE,direction=Bi-directional,dsp_resource_opt=false,engine_arch=Single Output,hard_fp=false,hyper_opt=false,in_order=Natural,in_width=24,in_width_derived=24,length=4096,num_engines=1,num_engines_derived=1,out_order=Natural,out_width=32,out_width_derived=24,selected_device_family=Cyclone IV E,twid_width=24,twid_width_derived=24"
    instancePathKey="fft_ip:.:fft_ii_0"
    kind="altera_fft_ii"
    version="18.1"
    name="fft_ip_fft_ii_0">
-  <parameter name="THROUGHPUT_LATENCY" value="4096" />
+  <parameter name="THROUGHPUT_LATENCY" value="5228" />
   <parameter name="in_width_derived" value="24" />
   <parameter name="in_order" value="Natural" />
   <parameter name="hyper_opt" value="false" />
   <parameter name="num_engines_derived" value="1" />
   <parameter name="twid_width_derived" value="24" />
   <parameter name="length" value="4096" />
-  <parameter name="out_order" value="Digit Reverse" />
+  <parameter name="out_order" value="Natural" />
   <parameter name="selected_device_family" value="Cyclone IV E" />
   <parameter name="dsp_resource_opt" value="false" />
-  <parameter name="CALC_LATENCY" value="4096" />
+  <parameter name="CALC_LATENCY" value="13421" />
   <parameter name="design_env" value="NATIVE" />
-  <parameter name="data_rep" value="Fixed Point" />
+  <parameter name="data_rep" value="Block Floating Point" />
   <parameter name="in_width" value="24" />
-  <parameter name="engine_arch" value="Quad Output" />
-  <parameter name="data_flow" value="Variable Streaming" />
+  <parameter name="engine_arch" value="Single Output" />
+  <parameter name="data_flow" value="Burst" />
   <parameter name="out_width" value="32" />
   <parameter name="num_engines" value="1" />
-  <parameter name="out_width_derived" value="32" />
+  <parameter name="out_width_derived" value="24" />
   <parameter name="hard_fp" value="false" />
   <parameter name="twid_width" value="24" />
   <parameter name="direction" value="Bi-directional" />
   <generatedFiles>
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi1.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_1n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr4.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_1n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi5.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_2n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr5.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_2n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi2.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_3n4096cos.hex"
        type="HEX"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr1.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr2.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi3.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twi4.hex"
-       type="HEX"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_opt_twr3.hex"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0_3n4096sin.hex"
        type="HEX"
        attributes="" />
    <file
@@ -449,24 +652,56 @@
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_can.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_sink.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx_1825.v"
-       type="VERILOG"
-       attributes="" />
-   <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_source.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_top.ocp"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_avalon_streaming_controller.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_sglstream.ocp"
        type="OTHER"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/hyper_opt_OFF_pkg.vhd"
-       type="VHDL"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dualstream.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_bb.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_so_se_so_b.ocp"
+       type="OTHER"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_sose_so_b.ocp"
+       type="OTHER"
        attributes="" />
    <file
        path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/altera_fft_dual_port_ram.vhd"
@@ -497,92 +732,300 @@
        type="SYSTEM_VERILOG"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_lib_pkg.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_pack.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_addr_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_cmult_cpx.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_core.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_cmult_cpx2.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_bit_reverse_reverse_carry_adder.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_can.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_adder_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_addsub.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_1dp_ram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bfi.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_1tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bfii.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3dp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_bf_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3pi_mram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_3tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_adder_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_4dp_ram.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_bfi_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_6tdp_rom.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_cma_fp.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_alt_shift_tdl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_core.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_ctrl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_counter.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_i.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_delay.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_i_1pt.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_enable_control.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_o.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stage.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_bfp_o_1pt.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stg_out_pipe.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_stg_pipe.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl_de.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_top.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_burst_ctrl_qe.vhd"
        type="VHDL"
        attributes="" />
    <file
-       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/auk_dspip_r22sdf_twrom.vhd"
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cmult_can.vhd"
        type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cmult_std.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cnt_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cnt_ctrl_de.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_addr.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_cxb_data_r.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dataadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_data_ram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_data_ram_dp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dft_bfp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dft_bfp_sgl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dpi_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dp_mram.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_dualstream.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_in_write_sgl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lcm_mult.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lcm_mult_2m.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpprdadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpprdadr2gen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp_serial.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_lpp_serial_r2.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_mult_add.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_m_k_counter.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_pround.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_sglstream.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_de_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_qe_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_se_so_bb.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_si_sose_so_b.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_bit.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_bit_rst.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_tdl_rst.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadgen_dual.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadsogen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twadsogen_q.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twiddle_ctrl_qe.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_twid_rom_tdp.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl_de.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_ctrl_qe.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_unbburst_sose_ctrl.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_wrengen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/asj_fft_wrswgen.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/twid_rom.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/apn_fft_mult_cpx_1825.v"
+       type="VERILOG"
        attributes="" />
    <file
        path="C:/Users/chris/Desktop/p4p_gss/quartus/fft_ip/synthesis/submodules/fft_ip_fft_ii_0.sv"
@@ -602,16 +1045,12 @@
   <instantiator instantiator="fft_ip" as="fft_ii_0" />
   <messages>
    <message level="Debug" culprit="fft_ip">queue size: 0 starting:altera_fft_ii "submodules/fft_ip_fft_ii_0"</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi1.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr4.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi5.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr5.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi2.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr1.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr2.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi3.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twi4.hex</message>
-   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_opt_twr3.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_1n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_1n4096sin.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_2n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_2n4096sin.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_3n4096cos.hex</message>
+   <message level="Info" culprit="fft_ii_0">--- add file: fft_ip_fft_ii_0_3n4096sin.hex</message>
    <message level="Info" culprit="fft_ii_0"><![CDATA["<b>fft_ip</b>" instantiated <b>altera_fft_ii</b> "<b>fft_ii_0</b>"]]></message>
   </messages>
  </entity>

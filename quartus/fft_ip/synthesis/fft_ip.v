@@ -13,16 +13,15 @@ module fft_ip (
 		input  wire        sink_eop,     //       .sink_eop
 		input  wire [23:0] sink_real,    //       .sink_real
 		input  wire [23:0] sink_imag,    //       .sink_imag
-		input  wire [12:0] fftpts_in,    //       .fftpts_in
 		input  wire [0:0]  inverse,      //       .inverse
 		output wire        source_valid, // source.source_valid
 		input  wire        source_ready, //       .source_ready
 		output wire [1:0]  source_error, //       .source_error
 		output wire        source_sop,   //       .source_sop
 		output wire        source_eop,   //       .source_eop
-		output wire [31:0] source_real,  //       .source_real
-		output wire [31:0] source_imag,  //       .source_imag
-		output wire [12:0] fftpts_out    //       .fftpts_out
+		output wire [23:0] source_real,  //       .source_real
+		output wire [23:0] source_imag,  //       .source_imag
+		output wire [5:0]  source_exp    //       .source_exp
 	);
 
 	fft_ip_fft_ii_0 fft_ii_0 (
@@ -35,7 +34,6 @@ module fft_ip (
 		.sink_eop     (sink_eop),     //       .sink_eop
 		.sink_real    (sink_real),    //       .sink_real
 		.sink_imag    (sink_imag),    //       .sink_imag
-		.fftpts_in    (fftpts_in),    //       .fftpts_in
 		.inverse      (inverse),      //       .inverse
 		.source_valid (source_valid), // source.source_valid
 		.source_ready (source_ready), //       .source_ready
@@ -44,7 +42,7 @@ module fft_ip (
 		.source_eop   (source_eop),   //       .source_eop
 		.source_real  (source_real),  //       .source_real
 		.source_imag  (source_imag),  //       .source_imag
-		.fftpts_out   (fftpts_out)    //       .fftpts_out
+		.source_exp   (source_exp)    //       .source_exp
 	);
 
 endmodule
