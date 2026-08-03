@@ -9,7 +9,7 @@ module power_stage #(
 
     // fft_ip side
     input  logic        source_valid,
-    output logic        source_ready, // in place for when calculations in future need to stall
+    output logic        source_ready, // for when calculations in future stall
     input  logic        source_sop,
     input  logic        source_eop,
     input  logic [23:0] source_real,
@@ -18,11 +18,11 @@ module power_stage #(
     input  logic [5:0]  source_exp,  // unused scaling
 
     // per bin power stream out (half spectrum only)
-    output logic power_valid,
-    output logic [$clog2(FFT_N)-1:0] power_bin, // if half spectrum why not FFT_N/2 ? 
-    output logic [47:0] power_mag2,
-    output logic power_first, // bin 0 of frame
-    output logic power_last // Nyquist bin FFT/2 of this frame 
+    output logic                     power_valid,
+    output logic [$clog2(FFT_N)-1:0] power_bin, // if half spectrum why not FFT_N/2 ?
+    output logic [47:0]              power_mag2,
+    output logic                     power_first, // bin 0 of frame
+    output logic                     power_last // Nyquist bin FFT/2 of this frame
 );
 
 localparam int NYQ_BIN = FFT_N / 2;
@@ -32,8 +32,9 @@ assign source_ready = 1'b1;
 
 // bin address tracking
 logic [$clog2(FFT_N)-1:0] bin_cnt;
-logic within_half;  
+logic within_half;
 
+// feel like technically there should be a latch start but that might overcomplicate it
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin 
         bin_cnt <= '0;
