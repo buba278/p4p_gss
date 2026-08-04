@@ -51,11 +51,23 @@ logic [1:0]          sink_error;
 logic [23:0]         sink_real, sink_imag;
 logic                fft_sink_stall;
 
-// fft_ip -> (next stage, not yet built) (Avalon-ST source side)
+// fft_ip -> power_stage (Avalon-ST source side)
 logic                source_valid, source_ready, source_sop, source_eop;
 logic [1:0]          source_error;
 logic [23:0]         source_real, source_imag;
 logic [5:0]          source_exp;
+
+// power_stage -> peak_argmax
+logic                        power_valid;
+logic [$clog2(FFT_N)-1:0]    power_bin;
+logic [47:0]                 power_mag2;
+logic                        power_first;
+logic                        power_last;
+
+// peak_argmax -> (next stage / debug taps)
+logic                        peak_valid;
+logic [$clog2(FFT_N)-1:0]    peak_bin;
+logic [47:0]                 peak_mag2;
 
 // == instantiations ==
 
@@ -133,8 +145,7 @@ hamming_window #(
     .fft_sink_stall (fft_sink_stall)
 );
 
-// FFT IP: N=4096, burst, natural in/out, block floating point out, 24bit in/out 
-assign source_ready = 1'b1; // TODO: drive from next stage once it exists
+// FFT IP: N=4096, burst, natural in/out, block floating point out, 24bit in/out
 
 fft_ip fft_ip_inst (
     .clk          (CLOCK_50),
@@ -157,7 +168,46 @@ fft_ip fft_ip_inst (
     .source_exp   (source_exp)
 );
 
-// TODO: instantiate cfar, peak_detect — consumes source_real/source_imag
+// power/magnitude stage: complex bin -> magnitude-squared, half-spectrum only
+power_stage #(
+    .FFT_N (FFT_N)
+) power_stage_inst (
+    .clk          (CLOCK_50),
+    .rst_n        (init_done),     // same reset domain as fft_ip — stays frame-aligned with it
+    .source_valid (source_valid),
+    .source_ready (source_ready),  // drives fft_ip's source_ready — see note above
+    .source_sop   (source_sop),
+    .source_eop   (source_eop),
+    .source_real  (source_real),
+    .source_imag  (source_imag),
+    .source_exp   (source_exp),
+    .power_valid  (power_valid),
+    .power_bin    (power_bin),
+    .power_mag2   (power_mag2),
+    .power_first  (power_first),
+    .power_last   (power_last)
+);
+
+// naive per-frame argmax - proof-of-concept peak search
+peak_argmax #(
+    .FFT_N   (FFT_N),
+    .MIN_BIN (1)          // exclude bin 0 (DC / residual 1/f)
+) peak_argmax_inst (
+    .clk         (CLOCK_50),
+    .rst_n       (init_done),
+    .power_valid (power_valid),
+    .power_bin   (power_bin),
+    .power_mag2  (power_mag2),
+    .power_first (power_first),
+    .power_last  (power_last),
+    .peak_valid  (peak_valid),
+    .peak_bin    (peak_bin),
+    .peak_mag2   (peak_mag2)
+);
+
+// TODO: cfar goes here later, inserted between power_stage and whatever
+// replaces peak_argmax — consumes power_valid/power_bin/power_mag2/
+// power_first/power_last, same as peak_argmax does now
 
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
