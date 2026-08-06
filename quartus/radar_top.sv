@@ -22,6 +22,17 @@ module radar_top (
     output logic        I2C_SCLK,       // PIN_B7
     inout  wire         I2C_SDAT,       // PIN_A8 — must be 'wire' for Z state
 
+    // == LCD Module (16×2, HD44780-compatible, 8-bit interface) ==
+    // Pin assignments from DE2-115 user manual Table 4-6.
+    // All signals are 3.3 V (LVTTL) — use the 2.7–4.5 V AC timing table.
+    // output logic        LCD_RS,         // PIN_M2  — 0=instruction, 1=data
+    // output logic        LCD_RW,         // PIN_M1  — tied 0 (always write)
+    // output logic        LCD_EN,         // PIN_L4  — active-high enable
+    // output logic [7:0]  LCD_DATA,       // PIN_M5/M3/K2/K1/K7/L2/L1/L3 — DB7..DB0
+    // output logic        LCD_ON,         // PIN_L5  — 1 = panel powered
+    // output logic        LCD_BLON,       // PIN_L6  — backlight; not fitted on DE2-115,
+    //                                     //           drive 0 to avoid floating
+
     // == Debug ==
     output logic [17:0] LEDR,
     output logic  [8:0] LEDG
@@ -73,7 +84,7 @@ logic [47:0]                 peak_mag2;
 logic                        freq_valid;
 logic [19:0]                 freq_scaled;   // Hz * 16
 
-// freq_to_speed -> (display / CAN, not yet built)
+// freq_to_speed -> (CAN, not yet built)
 logic                        speed_valid;
 logic [39:0]                 speed_scaled;  // km/h * 65536
 
@@ -240,6 +251,27 @@ freq_to_speed #(
     .speed_valid  (speed_valid),
     .speed_scaled (speed_scaled)
 );
+
+// LCD display: shows peak Doppler frequency on a 16×2 HD44780 panel.
+// freq_valid and freq_scaled are tapped directly from the bin_to_freq output
+// (same signals that go into freq_to_speed) — the LCD module is read-only
+// from the pipeline's perspective.
+// rst_n is tied to init_done so the LCD does not start its power-on sequence
+// until the codec is configured and the DSP pipeline is running.
+// lcd_freq_display lcd_display_inst (
+//     .clk         (CLOCK_50),
+//     .rst_n       (init_done),
+//     .freq_valid  (freq_valid),
+//     .freq_scaled (freq_scaled),
+//     .LCD_RS      (LCD_RS),
+//     .LCD_RW      (LCD_RW),
+//     .LCD_EN      (LCD_EN),
+//     .LCD_DATA    (LCD_DATA),
+//     .LCD_ON      (LCD_ON)
+// );
+
+// Backlight not fitted on DE2-115; tie low to avoid the pin floating.
+assign LCD_BLON = 1'b0;
 
 // TODO: cfar goes here later, inserted between power_stage and whatever
 // replaces peak_argmax — consumes power_valid/power_bin/power_mag2/
