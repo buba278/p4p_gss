@@ -22,7 +22,7 @@ module peak_argmax #(
 
 // bin is elegible to participate in (and win) the running max
 logic eligible;
-assign eligible = power_valid && (power_bin >= MIN_BIN[$clog(FFT_N)-1:0]);
+assign eligible = power_valid && (power_bin >= MIN_BIN[$clog2(FFT_N)-1:0]);
 
 logic [47:0]              running_max_mag2;
 logic [$clog2(FFT_N)-1:0] running_max_bin;

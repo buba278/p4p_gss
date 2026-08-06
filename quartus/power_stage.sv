@@ -12,14 +12,13 @@ module power_stage #(
     output logic        source_ready, // for when calculations in future stall
     input  logic        source_sop,
     input  logic        source_eop,
-    input  logic [23:0] source_real,
     input  logic [23:0] source_imag,
     input  logic [23:0] source_real,
     input  logic [5:0]  source_exp,  // unused scaling
 
     // per bin power stream out (half spectrum only)
     output logic                     power_valid,
-    output logic [$clog2(FFT_N)-1:0] power_bin, // if half spectrum why not FFT_N/2 ?
+    output logic [$clog2(FFT_N)-1:0] power_bin,
     output logic [47:0]              power_mag2,
     output logic                     power_first, // bin 0 of frame
     output logic                     power_last // Nyquist bin FFT/2 of this frame
@@ -50,7 +49,8 @@ assign within_half = (bin_cnt <= NYQ_BIN[$clog2(FFT_N)-1:0]); // 32->12bit conve
 
 // mag squared
 logic [47:0] mag2_d;
-logic        valid_d, within_half_d, first_d, last_d;
+logic valid_d, within_half_d, first_d, last_d;
+logic [$clog2(FFT_N)-1:0] bin_d;
 
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin

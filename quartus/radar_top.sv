@@ -64,10 +64,18 @@ logic [47:0]                 power_mag2;
 logic                        power_first;
 logic                        power_last;
 
-// peak_argmax -> (next stage / debug taps)
+// peak_argmax -> bin_to_freq
 logic                        peak_valid;
 logic [$clog2(FFT_N)-1:0]    peak_bin;
 logic [47:0]                 peak_mag2;
+
+// bin_to_freq -> freq_to_speed
+logic                        freq_valid;
+logic [19:0]                 freq_scaled;   // Hz * 16
+
+// freq_to_speed -> (display / CAN, not yet built)
+logic                        speed_valid;
+logic [39:0]                 speed_scaled;  // km/h * 65536
 
 // == instantiations ==
 
@@ -188,10 +196,10 @@ power_stage #(
     .power_last   (power_last)
 );
 
-// naive per-frame argmax - proof-of-concept peak search
+// naive per-frame argmax - due to be replaced with XCA
 peak_argmax #(
     .FFT_N   (FFT_N),
-    .MIN_BIN (1)          // exclude bin 0 (DC / residual 1/f)
+    .MIN_BIN (1)          // exclude bin 0 (DC / residual 1/f) from winning
 ) peak_argmax_inst (
     .clk         (CLOCK_50),
     .rst_n       (init_done),
@@ -203,6 +211,34 @@ peak_argmax #(
     .peak_valid  (peak_valid),
     .peak_bin    (peak_bin),
     .peak_mag2   (peak_mag2)
+);
+
+// bin index -> frequency, exact integer arithmetic (see bin_to_freq.sv header)
+bin_to_freq #(
+    .FFT_N (FFT_N)
+) bin_to_freq_inst (
+    .clk         (CLOCK_50),
+    .rst_n       (init_done),
+    .bin_valid   (peak_valid),
+    .bin_in      (peak_bin),
+    .freq_valid  (freq_valid),
+    .freq_scaled (freq_scaled)
+);
+
+// frequency -> speed, constant-multiply by precomputed reciprocal of
+// 44.7*cos(50deg) - see freq_to_speed.sv header for the derivation and the
+// IMPORTANT note about MOUNT_ANGLE_DEG vs K_INT
+freq_to_speed #(
+    .MOUNT_ANGLE_DEG (50),
+    .K_FRAC_BITS     (16),
+    .K_INT           (143)
+) freq_to_speed_inst (
+    .clk          (CLOCK_50),
+    .rst_n        (init_done),
+    .freq_valid   (freq_valid),
+    .freq_scaled  (freq_scaled),
+    .speed_valid  (speed_valid),
+    .speed_scaled (speed_scaled)
 );
 
 // TODO: cfar goes here later, inserted between power_stage and whatever
