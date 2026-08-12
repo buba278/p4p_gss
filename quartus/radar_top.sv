@@ -35,7 +35,12 @@ module radar_top (
 
     // == Debug ==
     output logic [17:0] LEDR,
-    output logic  [8:0] LEDG
+    output logic  [8:0] LEDG,
+
+    // == UART telemetry (live spectrum, dev/tuning use only) ==
+    // TODO: pin location — fill in from the DE2-115 User Manual RS-232 table
+    // and add the matching set_location_assignment in radar_top.qsf.
+    output logic         UART_TXD
 );
 
 // internal wires — declared here because only the top level sees across modules
@@ -205,6 +210,49 @@ power_stage #(
     .power_mag2   (power_mag2),
     .power_first  (power_first),
     .power_last   (power_last)
+);
+
+// UART telemetry: isolated, one-cycle-delayed copy of power_stage's outputs
+// feeds spectrum_uart_tx instead of the raw wires. Root cause of the
+// 2026-08-09 LCD instability was spectrum_uart_tx's heavy combinational
+// logic (msn_index priority encoder + mem_live BRAM write) sharing the same
+// source fanout as peak_argmax's timing-critical path, eating into already-
+// thin hold margin. This tap decouples it — one cycle of extra latency is
+// irrelevant for a link that's already ~266ms stale by design (see
+// spectrum_uart_tx.sv header and quartus/scripts/live_spectrum.py).
+logic                     power_valid_tap;
+logic [$clog2(FFT_N)-1:0] power_bin_tap;
+logic [47:0]              power_mag2_tap;
+logic                     power_last_tap;  // same 1-cycle delay as the rest of the tap,
+                                            // so it lines up with when power_bin_tap's
+                                            // final write of the frame actually lands
+
+always_ff @(posedge CLOCK_50 or negedge init_done) begin
+    if (!init_done) begin
+        power_valid_tap <= 1'b0;
+        power_last_tap  <= 1'b0;
+    end else begin
+        power_valid_tap <= power_valid;
+        power_bin_tap   <= power_bin;
+        power_mag2_tap  <= power_mag2;
+        power_last_tap  <= power_valid && power_last;
+    end
+end
+
+spectrum_uart_tx #(
+    .CLK_FREQ_HZ (50_000_000),
+    .BAUD_RATE   (115_200)  // dropped from 460_800 to test whether corrupted
+                            // lines are PC-side RX overrun (no flow control,
+                            // continuous streaming) vs. an FPGA-side bug —
+                            // see quartus/scripts/live_spectrum.py header
+) spectrum_uart_tx_inst (
+    .clk         (CLOCK_50),
+    .rst_n       (init_done),
+    .power_valid (power_valid_tap),
+    .power_bin   (power_bin_tap),
+    .power_mag2  (power_mag2_tap),
+    .power_last  (power_last_tap),
+    .uart_txd    (UART_TXD)
 );
 
 // naive per-frame argmax - due to be replaced with XCA
