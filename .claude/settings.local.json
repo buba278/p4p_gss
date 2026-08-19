@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"^Data:\\\\|^Groups:\\\\|^$\" /mnt/c/Users/chris/Desktop/p4p_gss/quartus/output_files/stp1.csv)",
+      "Bash(xargs -I{} ls -la {})"
+    ]
+  }
+}
