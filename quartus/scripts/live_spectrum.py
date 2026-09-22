@@ -3,11 +3,24 @@
 """
 Live spectrum plot from the FPGA's UART telemetry link.
 
-Expects one line per bin, straight off power_stage as power_valid pulses:
-    "<bin><exp><mantissa><checksum>\n"   (3 hex digit bin index, 1 hex digit
-                                          exponent, 4 hex digit mantissa,
-                                          1 hex digit checksum; matches
-                                          spectrum_uart_tx.sv)
+telemetry_uart_tx.sv (replaced spectrum_uart_tx.sv) also drains a raw-ADC
+snapshot on the same link, tagged 'A' — this viewer only cares about the
+spectrum, so 'A' lines are just skipped. See log_telemetry.py if you want
+both streams logged to CSV instead of a live plot.
+
+Also overlays the pipeline's actual peak/freq/speed output (tag 'P', one
+line per telemetry cycle) as a vertical line + text box on the plot, so you
+can see at a glance whether the winning bin lines up with what the
+spectrum actually shows.
+
+Expects one line per bin, tagged 'S':
+    "S<bin><exp><mantissa><checksum>\n"   (3 hex digit bin index, 1 hex digit
+                                           exponent, 4 hex digit mantissa,
+                                           1 hex digit checksum; matches
+                                           telemetry_uart_tx.sv)
+and one peak/freq/speed line per cycle, tagged 'P':
+    "P<peak_bin><freq_scaled><speed_scaled><checksum>\n" (see
+                                           telemetry_uart_tx.sv header)
 The bin index is sent explicitly rather than inferred by counting lines: on
 a link with no flow control, sustained line loss is common enough that a
 count-based scheme has one dropped line shift every bin after it for the
@@ -37,13 +50,21 @@ import serial
 
 FFT_N = 4096            # must match radar_top.sv
 N_BINS = FFT_N // 2 + 1  # 0 (DC) .. FFT_N/2 (Nyquist) inclusive
-BIN_DIGITS = 3           # must match BIN_DIGITS in spectrum_uart_tx.sv (BIN_WIDTH/4)
-MANTISSA_DIGITS = 4      # must match MANTISSA_DIGITS in spectrum_uart_tx.sv
+BIN_DIGITS = 3           # must match BIN_DIGITS in telemetry_uart_tx.sv (BIN_WIDTH/4)
+MANTISSA_DIGITS = 4      # must match MANTISSA_DIGITS in telemetry_uart_tx.sv
+FREQ_DIGITS = 5          # must match FREQ_WIDTH/4 in telemetry_uart_tx.sv
+SPEED_DIGITS = 10        # must match SPEED_WIDTH/4 in telemetry_uart_tx.sv
+FREQ_FRAC_BITS = 4       # must match bin_to_freq.sv's FREQ_FRAC_BITS
+SPEED_FRAC_BITS = 16     # must match freq_to_speed.sv's K_FRAC_BITS
 
 
 def decode_line(line):
-    """'<3 bin digits><1 exp digit><4 mantissa digits><1 checksum digit>'
-    -> (bin, magnitude)."""
+    """'S<3 bin digits><1 exp digit><4 mantissa digits><1 checksum digit>'
+    -> (bin, magnitude). Raises ValueError (including on 'A'/'P' lines,
+    which this viewer isn't interested in) so the caller just skips them."""
+    if not line or line[0] != "S":
+        raise ValueError(f"not a spectrum line: {line!r}")
+    line = line[1:]
     expected_len = BIN_DIGITS + 1 + MANTISSA_DIGITS + 1
     if len(line) != expected_len:
         raise ValueError(f"expected {expected_len} hex chars, got {line!r}")
@@ -65,7 +86,31 @@ def decode_line(line):
     return bin_idx, mag2
 
 
-def reader_thread(port, baud, buffer, lock, stop_event):
+def decode_peak(line):
+    """'P<3 bin digits><5 freq digits><10 speed digits><1 checksum digit>'
+    -> (peak_bin, freq_hz, speed_kmh). Raises ValueError on anything else,
+    same convention as decode_line."""
+    if not line or line[0] != "P":
+        raise ValueError(f"not a peak line: {line!r}")
+    line = line[1:]
+    expected_len = BIN_DIGITS + FREQ_DIGITS + SPEED_DIGITS + 1
+    if len(line) != expected_len:
+        raise ValueError(f"expected {expected_len} hex chars, got {line!r}")
+    nibbles = [int(c, 16) for c in line]
+    checksum = 0
+    for n in nibbles[:-1]:
+        checksum ^= n
+    if checksum != nibbles[-1]:
+        raise ValueError(f"checksum mismatch in {line!r}")
+    peak_bin = int(line[:BIN_DIGITS], 16)
+    freq_scaled = int(line[BIN_DIGITS:BIN_DIGITS + FREQ_DIGITS], 16)
+    speed_scaled = int(line[BIN_DIGITS + FREQ_DIGITS:BIN_DIGITS + FREQ_DIGITS + SPEED_DIGITS], 16)
+    freq_hz = freq_scaled / (1 << FREQ_FRAC_BITS)
+    speed_kmh = speed_scaled / (1 << SPEED_FRAC_BITS)
+    return peak_bin, freq_hz, speed_kmh
+
+
+def reader_thread(port, baud, buffer, peak_state, lock, stop_event):
     try:
         ser = serial.Serial(port, baud, timeout=1)
     except serial.SerialException as exc:
@@ -87,6 +132,18 @@ def reader_thread(port, baud, buffer, lock, stop_event):
             if not line:
                 continue
             lines_seen += 1
+            if line[0] == "P":
+                try:
+                    peak_bin, freq_hz, speed_kmh = decode_peak(line)
+                except ValueError:
+                    continue
+                lines_parsed += 1
+                with lock:
+                    peak_state["bin"] = peak_bin
+                    peak_state["freq_hz"] = freq_hz
+                    peak_state["speed_kmh"] = speed_kmh
+                continue
+
             try:
                 bin_idx, mag2 = decode_line(line)
             except ValueError:
@@ -111,11 +168,12 @@ def main():
     args = parser.parse_args()
 
     buffer = np.ones(N_BINS)  # 1, not 0, so log scale starts sane
+    peak_state = {"bin": None, "freq_hz": None, "speed_kmh": None}
     lock = threading.Lock()
     stop_event = threading.Event()
 
     thread = threading.Thread(
-        target=reader_thread, args=(args.port, args.baud, buffer, lock, stop_event), daemon=True
+        target=reader_thread, args=(args.port, args.baud, buffer, peak_state, lock, stop_event), daemon=True
     )
     thread.start()
 
@@ -126,12 +184,26 @@ def main():
     ax.set_ylabel("power_mag2")
     ax.set_xlim(0, N_BINS - 1)
 
+    peak_vline = ax.axvline(0, color="red", linestyle="--", linewidth=1, alpha=0.7, visible=False)
+    peak_text = ax.text(
+        0.98, 0.97, "waiting for peak...", transform=ax.transAxes,
+        ha="right", va="top", fontsize=10, color="red",
+        bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="red"),
+    )
+
     def update(_frame):
         with lock:
             line.set_ydata(buffer)
+            peak_bin   = peak_state["bin"]
+            freq_hz    = peak_state["freq_hz"]
+            speed_kmh  = peak_state["speed_kmh"]
         ax.relim()
         ax.autoscale_view(scalex=False)
-        return (line,)
+        if peak_bin is not None:
+            peak_vline.set_xdata([peak_bin, peak_bin])
+            peak_vline.set_visible(True)
+            peak_text.set_text(f"bin {peak_bin}\n{freq_hz:.1f} Hz\n{speed_kmh:.1f} km/h")
+        return (line, peak_vline, peak_text)
 
     ani = animation.FuncAnimation(
         fig, update, interval=args.refresh_ms, blit=False, cache_frame_data=False
