@@ -73,17 +73,16 @@ logic [1:0]          source_error;
 logic [23:0]         source_real, source_imag;
 logic [5:0]          source_exp;
 
-// power_stage -> peak_argmax
+// power_stage -> peak_xca
 logic                        power_valid;
 logic [$clog2(FFT_N)-1:0]    power_bin;
 logic [47:0]                 power_mag2;
-logic                        power_first;
 logic                        power_last;
 
-// peak_argmax -> bin_to_freq
+// peak_xca -> bin_to_freq
 logic                        peak_valid;
 logic [$clog2(FFT_N)-1:0]    peak_bin;
-logic [47:0]                 peak_mag2;
+logic [47:0]                 peak_corr;
 
 // bin_to_freq -> freq_to_speed
 logic                        freq_valid;
@@ -208,7 +207,6 @@ power_stage #(
     .power_valid  (power_valid),
     .power_bin    (power_bin),
     .power_mag2   (power_mag2),
-    .power_first  (power_first),
     .power_last   (power_last)
 );
 
@@ -227,49 +225,104 @@ logic                     power_last_tap;  // same 1-cycle delay as the rest of 
                                             // so it lines up with when power_bin_tap's
                                             // final write of the frame actually lands
 
+// same decoupling reasoning, applied to the raw (pre-Hamming) window tap
+// feeding telemetry_uart_tx's second buffer — see 2026-08-20 raw-ADC
+// logging addition in telemetry_uart_tx.sv
+logic                     adc_valid_tap;
+logic [$clog2(FFT_N)-1:0] adc_addr_tap;
+logic [23:0]              adc_data_tap;
+logic                     adc_last_tap;
+
+// peak/freq/speed tap — one value per frame, feeds telemetry_uart_tx's 'P'
+// line so the CSV logger can record what the pipeline actually output
+// alongside the raw spectrum/samples, not just what a human reads off the LCD
+logic                     peak_valid_tap;
+logic [$clog2(FFT_N)-1:0] peak_bin_tap;
+logic                     freq_valid_tap;
+logic [19:0]              freq_scaled_tap;
+logic                     speed_valid_tap;
+logic [39:0]              speed_scaled_tap;
+
 always_ff @(posedge CLOCK_50 or negedge init_done) begin
     if (!init_done) begin
         power_valid_tap <= 1'b0;
         power_last_tap  <= 1'b0;
+        adc_valid_tap   <= 1'b0;
+        adc_last_tap    <= 1'b0;
+        peak_valid_tap  <= 1'b0;
+        freq_valid_tap  <= 1'b0;
+        speed_valid_tap <= 1'b0;
     end else begin
         power_valid_tap <= power_valid;
         power_bin_tap   <= power_bin;
         power_mag2_tap  <= power_mag2;
         power_last_tap  <= power_valid && power_last;
+
+        adc_valid_tap   <= fft_data_valid;
+        adc_addr_tap    <= fft_addr;
+        adc_data_tap    <= fft_data;
+        adc_last_tap    <= fft_data_valid && fft_last;
+
+        peak_valid_tap   <= peak_valid;
+        peak_bin_tap     <= peak_bin;
+        freq_valid_tap   <= freq_valid;
+        freq_scaled_tap  <= freq_scaled;
+        speed_valid_tap  <= speed_valid;
+        speed_scaled_tap <= speed_scaled;
     end
 end
 
-spectrum_uart_tx #(
+telemetry_uart_tx #(
     .CLK_FREQ_HZ (50_000_000),
     .BAUD_RATE   (115_200)  // dropped from 460_800 to test whether corrupted
                             // lines are PC-side RX overrun (no flow control,
                             // continuous streaming) vs. an FPGA-side bug —
-                            // see quartus/scripts/live_spectrum.py header
-) spectrum_uart_tx_inst (
+                            // see quartus/scripts/live_spectrum.py header.
+                            // Draining raw+spectrum together is ~3x the line
+                            // count spectrum-only was, so this link is
+                            // correspondingly slower — worth re-testing a
+                            // higher baud now that the RX overrun is fixed.
+) telemetry_uart_tx_inst (
     .clk         (CLOCK_50),
     .rst_n       (init_done),
     .power_valid (power_valid_tap),
     .power_bin   (power_bin_tap),
     .power_mag2  (power_mag2_tap),
     .power_last  (power_last_tap),
+    .adc_valid   (adc_valid_tap),
+    .adc_addr    (adc_addr_tap),
+    .adc_data    (adc_data_tap),
+    .adc_last    (adc_last_tap),
+    .peak_valid  (peak_valid_tap),
+    .peak_bin    (peak_bin_tap),
+    .freq_valid  (freq_valid_tap),
+    .freq_scaled (freq_scaled_tap),
+    .speed_valid (speed_valid_tap),
+    .speed_scaled(speed_scaled_tap),
     .uart_txd    (UART_TXD)
 );
 
-// naive per-frame argmax - due to be replaced with XCA
-peak_argmax #(
-    .FFT_N   (FFT_N),
-    .MIN_BIN (1)          // exclude bin 0 (DC / residual 1/f) from winning
-) peak_argmax_inst (
+// cross-correlation peak tracking - matched-filters the spectrum against a
+// Gaussian template instead of taking the raw tallest bin (see peak_xca.sv)
+peak_xca #(
+    .FFT_N               (FFT_N),
+    .MIN_BIN             (1),    // exclude bin 0 (DC / residual 1/f) from winning
+    .MAX_BIN             (2047), // TEMP: wide open for the 2026-08-20 treadmill test - the
+                                  // 150 km/h cap (~225) was clipping real capture data before
+                                  // we know where real speeds actually land in bin terms.
+                                  // Retighten once today's data gives a real number.
+    .GAUSSIAN_WIDTH_BINS (4),    // placeholder, tune with real data
+    .DETECT_THRESHOLD    (48'd0) // placeholder, tune with real data
+) peak_xca_inst (
     .clk         (CLOCK_50),
     .rst_n       (init_done),
     .power_valid (power_valid),
     .power_bin   (power_bin),
     .power_mag2  (power_mag2),
-    .power_first (power_first),
     .power_last  (power_last),
     .peak_valid  (peak_valid),
     .peak_bin    (peak_bin),
-    .peak_mag2   (peak_mag2)
+    .peak_corr   (peak_corr)
 );
 
 // bin index -> frequency, exact integer arithmetic (see bin_to_freq.sv header)
@@ -285,12 +338,12 @@ bin_to_freq #(
 );
 
 // frequency -> speed, constant-multiply by precomputed reciprocal of
-// 44.7*cos(50deg) - see freq_to_speed.sv header for the derivation and the
+// 44.7*cos(40deg) - see freq_to_speed.sv header for the derivation and the
 // IMPORTANT note about MOUNT_ANGLE_DEG vs K_INT
 freq_to_speed #(
-    .MOUNT_ANGLE_DEG (50),
+    .MOUNT_ANGLE_DEG (40),
     .K_FRAC_BITS     (16),
-    .K_INT           (143)
+    .K_INT           (120)
 ) freq_to_speed_inst (
     .clk          (CLOCK_50),
     .rst_n        (init_done),
@@ -315,10 +368,6 @@ lcd_freq_display lcd_display_inst (
 
 // Backlight not fitted on DE2-115; tie low to avoid the pin floating.
 assign LCD_BLON = 1'b0;
-
-// TODO: cfar goes here later, inserted between power_stage and whatever
-// replaces peak_argmax — consumes power_valid/power_bin/power_mag2/
-// power_first/power_last, same as peak_argmax does now
 
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
