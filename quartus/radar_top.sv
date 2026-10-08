@@ -82,6 +82,7 @@ logic                        power_last;
 // peak_xca -> bin_to_freq
 logic                        peak_valid;
 logic [$clog2(FFT_N)-1:0]    peak_bin;
+logic [3:0]                  peak_bin_frac; // BIN_FRAC_BITS wide, see peak_xca.sv
 logic [47:0]                 peak_corr;
 
 // bin_to_freq -> freq_to_speed
@@ -302,8 +303,9 @@ telemetry_uart_tx #(
     .uart_txd    (UART_TXD)
 );
 
-// cross-correlation peak tracking - matched-filters the spectrum against a
-// Gaussian template instead of taking the raw tallest bin (see peak_xca.sv)
+// cross-correlation peak tracking - matched-filters the spectrum against
+// two Gaussian templates (narrow/wide, for low/high speed returns) and
+// interpolates the winner to sub-bin precision (see peak_xca.sv)
 peak_xca #(
     .FFT_N               (FFT_N),
     .MIN_BIN             (1),    // exclude bin 0 (DC / residual 1/f) from winning
@@ -311,18 +313,20 @@ peak_xca #(
                                   // 150 km/h cap (~225) was clipping real capture data before
                                   // we know where real speeds actually land in bin terms.
                                   // Retighten once today's data gives a real number.
-    .GAUSSIAN_WIDTH_BINS (4),    // placeholder, tune with real data
-    .DETECT_THRESHOLD    (48'd0) // placeholder, tune with real data
+    .SIGMA_A             (3),    // narrow core - matches low-speed returns in real captures
+    .SIGMA_B             (9),    // wide core - matches high-speed returns in real captures
+    .DETECT_THRESHOLD    (48'd1_169_886_992) // estimated from real captures, see estimate_xca_params.py
 ) peak_xca_inst (
-    .clk         (CLOCK_50),
-    .rst_n       (init_done),
-    .power_valid (power_valid),
-    .power_bin   (power_bin),
-    .power_mag2  (power_mag2),
-    .power_last  (power_last),
-    .peak_valid  (peak_valid),
-    .peak_bin    (peak_bin),
-    .peak_corr   (peak_corr)
+    .clk           (CLOCK_50),
+    .rst_n         (init_done),
+    .power_valid   (power_valid),
+    .power_bin     (power_bin),
+    .power_mag2    (power_mag2),
+    .power_last    (power_last),
+    .peak_valid    (peak_valid),
+    .peak_bin      (peak_bin),
+    .peak_bin_frac (peak_bin_frac),
+    .peak_corr     (peak_corr)
 );
 
 // bin index -> frequency, exact integer arithmetic (see bin_to_freq.sv header)
@@ -333,6 +337,7 @@ bin_to_freq #(
     .rst_n       (init_done),
     .bin_valid   (peak_valid),
     .bin_in      (peak_bin),
+    .bin_frac_in (peak_bin_frac),
     .freq_valid  (freq_valid),
     .freq_scaled (freq_scaled)
 );
