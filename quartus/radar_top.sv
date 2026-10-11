@@ -219,7 +219,7 @@ power_stage #(
     .power_last   (power_last)
 );
 
-// UART telemetry: isolated, one-cycle-delayed copy of power_stage's outputs
+// UART telemetry: isolated, one-cycle-delayed copy of noise_cal's outputs
 // feeds spectrum_uart_tx instead of the raw wires. Root cause of the
 // 2026-08-09 LCD instability was spectrum_uart_tx's heavy combinational
 // logic (msn_index priority encoder + mem_live BRAM write) sharing the same
@@ -262,10 +262,13 @@ always_ff @(posedge CLOCK_50 or negedge init_done) begin
         freq_valid_tap  <= 1'b0;
         speed_valid_tap <= 1'b0;
     end else begin
-        power_valid_tap <= power_valid;
-        power_bin_tap   <= power_bin;
-        power_mag2_tap  <= power_mag2;
-        power_last_tap  <= power_valid && power_last;
+        // spectrum tap is post-noise_cal (what peak_xca actually sees). Before
+        // the first calibration this is identical to the raw power_stage stream;
+        // while calibrating cal_valid is held low, so no spectrum is sent.
+        power_valid_tap <= cal_valid;
+        power_bin_tap   <= cal_bin;
+        power_mag2_tap  <= cal_mag2;
+        power_last_tap  <= cal_valid && cal_last;
 
         adc_valid_tap   <= fft_data_valid;
         adc_addr_tap    <= fft_addr;
@@ -311,9 +314,9 @@ telemetry_uart_tx #(
     .uart_txd    (UART_TXD)
 );
 
-// button-triggered baseline subtraction (see noise_cal.sv). The UART tap
-// above deliberately stays on the raw power_stage stream so captures still
-// show the unsubtracted spectrum.
+// button-triggered baseline subtraction (see noise_cal.sv). The UART
+// spectrum tap above reads its output, so captures show the subtracted
+// spectrum once a calibration has been done.
 noise_cal #(
     .FFT_N (FFT_N)
 ) noise_cal_inst (
