@@ -6,6 +6,7 @@
 module radar_top (
     // main board clock
     input  logic        CLOCK_50,       // 50 MHz crystal, PIN_Y2
+    input  logic [0:0]  KEY,            // KEY[0] = noise calibration button (active low), PIN_M23
 
     // == WM8731 Audio CODEC ==
     // FPGA drives AUD_XCK; the codec drives everything else in master mode
@@ -73,17 +74,24 @@ logic [1:0]          source_error;
 logic [23:0]         source_real, source_imag;
 logic [5:0]          source_exp;
 
-// power_stage -> peak_argmax
+// power_stage -> peak_xca
 logic                        power_valid;
 logic [$clog2(FFT_N)-1:0]    power_bin;
 logic [47:0]                 power_mag2;
-logic                        power_first;
 logic                        power_last;
 
-// peak_argmax -> bin_to_freq
+// power_stage -> noise_cal -> peak_xca (baseline-subtracted spectrum)
+logic                        cal_valid;
+logic [$clog2(FFT_N)-1:0]    cal_bin;
+logic [47:0]                 cal_mag2;
+logic                        cal_last;
+logic                        cal_busy, cal_done;
+
+// peak_xca -> bin_to_freq
 logic                        peak_valid;
 logic [$clog2(FFT_N)-1:0]    peak_bin;
-logic [47:0]                 peak_mag2;
+logic [3:0]                  peak_bin_frac; // BIN_FRAC_BITS wide, see peak_xca.sv
+logic [47:0]                 peak_corr;
 
 // bin_to_freq -> freq_to_speed
 logic                        freq_valid;
@@ -208,11 +216,10 @@ power_stage #(
     .power_valid  (power_valid),
     .power_bin    (power_bin),
     .power_mag2   (power_mag2),
-    .power_first  (power_first),
     .power_last   (power_last)
 );
 
-// UART telemetry: isolated, one-cycle-delayed copy of power_stage's outputs
+// UART telemetry: isolated, one-cycle-delayed copy of noise_cal's outputs
 // feeds spectrum_uart_tx instead of the raw wires. Root cause of the
 // 2026-08-09 LCD instability was spectrum_uart_tx's heavy combinational
 // logic (msn_index priority encoder + mem_live BRAM write) sharing the same
@@ -227,49 +234,130 @@ logic                     power_last_tap;  // same 1-cycle delay as the rest of 
                                             // so it lines up with when power_bin_tap's
                                             // final write of the frame actually lands
 
+// same decoupling reasoning, applied to the raw (pre-Hamming) window tap
+// feeding telemetry_uart_tx's second buffer — see 2026-08-20 raw-ADC
+// logging addition in telemetry_uart_tx.sv
+logic                     adc_valid_tap;
+logic [$clog2(FFT_N)-1:0] adc_addr_tap;
+logic [23:0]              adc_data_tap;
+logic                     adc_last_tap;
+
+// peak/freq/speed tap — one value per frame, feeds telemetry_uart_tx's 'P'
+// line so the CSV logger can record what the pipeline actually output
+// alongside the raw spectrum/samples, not just what a human reads off the LCD
+logic                     peak_valid_tap;
+logic [$clog2(FFT_N)-1:0] peak_bin_tap;
+logic                     freq_valid_tap;
+logic [19:0]              freq_scaled_tap;
+logic                     speed_valid_tap;
+logic [39:0]              speed_scaled_tap;
+
 always_ff @(posedge CLOCK_50 or negedge init_done) begin
     if (!init_done) begin
         power_valid_tap <= 1'b0;
         power_last_tap  <= 1'b0;
+        adc_valid_tap   <= 1'b0;
+        adc_last_tap    <= 1'b0;
+        peak_valid_tap  <= 1'b0;
+        freq_valid_tap  <= 1'b0;
+        speed_valid_tap <= 1'b0;
     end else begin
-        power_valid_tap <= power_valid;
-        power_bin_tap   <= power_bin;
-        power_mag2_tap  <= power_mag2;
-        power_last_tap  <= power_valid && power_last;
+        // spectrum tap is post-noise_cal (what peak_xca actually sees). Before
+        // the first calibration this is identical to the raw power_stage stream;
+        // while calibrating cal_valid is held low, so no spectrum is sent.
+        power_valid_tap <= cal_valid;
+        power_bin_tap   <= cal_bin;
+        power_mag2_tap  <= cal_mag2;
+        power_last_tap  <= cal_valid && cal_last;
+
+        adc_valid_tap   <= fft_data_valid;
+        adc_addr_tap    <= fft_addr;
+        adc_data_tap    <= fft_data;
+        adc_last_tap    <= fft_data_valid && fft_last;
+
+        peak_valid_tap   <= peak_valid;
+        peak_bin_tap     <= peak_bin;
+        freq_valid_tap   <= freq_valid;
+        freq_scaled_tap  <= freq_scaled;
+        speed_valid_tap  <= speed_valid;
+        speed_scaled_tap <= speed_scaled;
     end
 end
 
-spectrum_uart_tx #(
+telemetry_uart_tx #(
     .CLK_FREQ_HZ (50_000_000),
     .BAUD_RATE   (115_200)  // dropped from 460_800 to test whether corrupted
                             // lines are PC-side RX overrun (no flow control,
                             // continuous streaming) vs. an FPGA-side bug —
-                            // see quartus/scripts/live_spectrum.py header
-) spectrum_uart_tx_inst (
+                            // see quartus/scripts/live_spectrum.py header.
+                            // Draining raw+spectrum together is ~3x the line
+                            // count spectrum-only was, so this link is
+                            // correspondingly slower — worth re-testing a
+                            // higher baud now that the RX overrun is fixed.
+) telemetry_uart_tx_inst (
     .clk         (CLOCK_50),
     .rst_n       (init_done),
     .power_valid (power_valid_tap),
     .power_bin   (power_bin_tap),
     .power_mag2  (power_mag2_tap),
     .power_last  (power_last_tap),
+    .adc_valid   (adc_valid_tap),
+    .adc_addr    (adc_addr_tap),
+    .adc_data    (adc_data_tap),
+    .adc_last    (adc_last_tap),
+    .peak_valid  (peak_valid_tap),
+    .peak_bin    (peak_bin_tap),
+    .freq_valid  (freq_valid_tap),
+    .freq_scaled (freq_scaled_tap),
+    .speed_valid (speed_valid_tap),
+    .speed_scaled(speed_scaled_tap),
     .uart_txd    (UART_TXD)
 );
 
-// naive per-frame argmax - due to be replaced with XCA
-peak_argmax #(
-    .FFT_N   (FFT_N),
-    .MIN_BIN (1)          // exclude bin 0 (DC / residual 1/f) from winning
-) peak_argmax_inst (
+// button-triggered baseline subtraction (see noise_cal.sv). The UART
+// spectrum tap above reads its output, so captures show the subtracted
+// spectrum once a calibration has been done.
+noise_cal #(
+    .FFT_N (FFT_N)
+) noise_cal_inst (
     .clk         (CLOCK_50),
     .rst_n       (init_done),
+    .cal_btn     (KEY[0]),
     .power_valid (power_valid),
     .power_bin   (power_bin),
     .power_mag2  (power_mag2),
-    .power_first (power_first),
     .power_last  (power_last),
-    .peak_valid  (peak_valid),
-    .peak_bin    (peak_bin),
-    .peak_mag2   (peak_mag2)
+    .cal_valid   (cal_valid),
+    .cal_bin     (cal_bin),
+    .cal_mag2    (cal_mag2),
+    .cal_last    (cal_last),
+    .cal_busy    (cal_busy),
+    .cal_done    (cal_done)
+);
+
+// cross-correlation peak tracking - matched-filters the spectrum against
+// two Gaussian templates (narrow/wide, for low/high speed returns) and
+// interpolates the winner to sub-bin precision (see peak_xca.sv)
+peak_xca #(
+    .FFT_N               (FFT_N),
+    .MIN_BIN             (1),    // exclude bin 0 (DC / residual 1/f) from winning
+    .MAX_BIN             (220),  // 150 km/h at 40 deg: 150*44.7*cos(40)/23.4375 = 219.2 bins.
+                                  // Was 2047 for testing, which let the correlator window at the
+                                  // top bins run past Nyquist into the next frame's DC and win.
+    .SIGMA_A             (3),    // narrow core - matches low-speed returns in real captures
+    .SIGMA_B             (9),    // wide core - matches high-speed returns in real captures
+    .DETECT_THRESHOLD    (48'd1_169_886_992) // estimated from real captures, see estimate_xca_params.py
+) peak_xca_inst (
+    .clk           (CLOCK_50),
+    .rst_n         (init_done),
+    .power_valid   (cal_valid),
+    .power_bin     (cal_bin),
+    .power_mag2    (cal_mag2),
+    .power_last    (cal_last),
+    .peak_valid    (peak_valid),
+    .peak_bin      (peak_bin),
+    .peak_bin_frac (peak_bin_frac),
+    .peak_corr     (peak_corr)
 );
 
 // bin index -> frequency, exact integer arithmetic (see bin_to_freq.sv header)
@@ -280,17 +368,18 @@ bin_to_freq #(
     .rst_n       (init_done),
     .bin_valid   (peak_valid),
     .bin_in      (peak_bin),
+    .bin_frac_in (peak_bin_frac),
     .freq_valid  (freq_valid),
     .freq_scaled (freq_scaled)
 );
 
 // frequency -> speed, constant-multiply by precomputed reciprocal of
-// 44.7*cos(50deg) - see freq_to_speed.sv header for the derivation and the
+// 44.7*cos(40deg) - see freq_to_speed.sv header for the derivation and the
 // IMPORTANT note about MOUNT_ANGLE_DEG vs K_INT
 freq_to_speed #(
-    .MOUNT_ANGLE_DEG (50),
+    .MOUNT_ANGLE_DEG (40),
     .K_FRAC_BITS     (16),
-    .K_INT           (143)
+    .K_INT           (120)
 ) freq_to_speed_inst (
     .clk          (CLOCK_50),
     .rst_n        (init_done),
@@ -316,14 +405,14 @@ lcd_freq_display lcd_display_inst (
 // Backlight not fitted on DE2-115; tie low to avoid the pin floating.
 assign LCD_BLON = 1'b0;
 
-// TODO: cfar goes here later, inserted between power_stage and whatever
-// replaces peak_argmax — consumes power_valid/power_bin/power_mag2/
-// power_first/power_last, same as peak_argmax does now
-
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
 assign LEDG[1] = init_done;    // green: codec configured
-assign LEDG[8:2] = '0;
+// flashes (~3 Hz) while calibrating, solid once a baseline is applied
+logic [23:0] cal_blink;
+always_ff @(posedge CLOCK_50) cal_blink <= cal_blink + 1'b1;
+assign LEDG[2] = cal_busy ? cal_blink[23] : cal_done;
+assign LEDG[8:3] = '0;
 
 assign LEDR[0] = fft_overrun;     // red: overlap_buffer tried to start a new window before FFT read the last one
 assign LEDR[1] = fft_sink_stall;  // red: hamming_window presented data the FFT IP didn't accept
