@@ -341,10 +341,9 @@ noise_cal #(
 peak_xca #(
     .FFT_N               (FFT_N),
     .MIN_BIN             (1),    // exclude bin 0 (DC / residual 1/f) from winning
-    .MAX_BIN             (2047), // TEMP: wide open for the 2026-08-20 treadmill test - the
-                                  // 150 km/h cap (~225) was clipping real capture data before
-                                  // we know where real speeds actually land in bin terms.
-                                  // Retighten once today's data gives a real number.
+    .MAX_BIN             (220),  // 150 km/h at 40 deg: 150*44.7*cos(40)/23.4375 = 219.2 bins.
+                                  // Was 2047 for testing, which let the correlator window at the
+                                  // top bins run past Nyquist into the next frame's DC and win.
     .SIGMA_A             (3),    // narrow core - matches low-speed returns in real captures
     .SIGMA_B             (9),    // wide core - matches high-speed returns in real captures
     .DETECT_THRESHOLD    (48'd1_169_886_992) // estimated from real captures, see estimate_xca_params.py
