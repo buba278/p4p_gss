@@ -67,7 +67,9 @@ generate
     end else if (GAUSSIAN_WIDTH_BINS == 9) begin : rom_sel
         gaussian_rom_sigma9 gaussian_rom_inst (.address(coeff_addr), .clock(clk), .q(coeff_q));
     end else begin : rom_sel
-        $error("xca_core: no gaussian ROM for GAUSSIAN_WIDTH_BINS=%0d", GAUSSIAN_WIDTH_BINS);
+        // Quartus rejects $error in generate; unsupported widths get an all-zero
+        // ROM, so the correlator scores zero everywhere and the mistake is obvious.
+        assign coeff_q = '0;
     end
 endgenerate
 
