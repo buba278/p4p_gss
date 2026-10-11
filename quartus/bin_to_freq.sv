@@ -34,6 +34,12 @@ module bin_to_freq #(
 logic [$clog2(FFT_N)+BIN_FRAC_BITS-1:0] bin_scaled;
 assign bin_scaled = {bin_in, bin_frac_in};
 
+// full-width product, shifted before narrowing to 20 bits. Multiplying
+// straight into the 20-bit freq_scaled context truncated the product before
+// the shift, wrapping every bin above ~174 (e.g. bin 2047 read as ~2930 Hz).
+logic [$clog2(FFT_N)+BIN_FRAC_BITS+9-1:0] freq_prod;   // 375 < 2^9
+assign freq_prod = bin_scaled * BIN_RES_NUM;
+
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         freq_valid  <= '0;
@@ -41,7 +47,7 @@ always_ff @(posedge clk or negedge rst_n) begin
     end else begin
         freq_valid <= bin_valid;
         if (bin_valid)
-            freq_scaled <= (bin_scaled * BIN_RES_NUM[19:0]) >> BIN_FRAC_BITS;
+            freq_scaled <= 20'(freq_prod >> BIN_FRAC_BITS);
     end
 end
 
