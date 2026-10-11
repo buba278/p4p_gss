@@ -6,6 +6,7 @@
 module radar_top (
     // main board clock
     input  logic        CLOCK_50,       // 50 MHz crystal, PIN_Y2
+    input  logic [0:0]  KEY,            // KEY[0] = noise calibration button (active low), PIN_M23
 
     // == WM8731 Audio CODEC ==
     // FPGA drives AUD_XCK; the codec drives everything else in master mode
@@ -78,6 +79,13 @@ logic                        power_valid;
 logic [$clog2(FFT_N)-1:0]    power_bin;
 logic [47:0]                 power_mag2;
 logic                        power_last;
+
+// power_stage -> noise_cal -> peak_xca (baseline-subtracted spectrum)
+logic                        cal_valid;
+logic [$clog2(FFT_N)-1:0]    cal_bin;
+logic [47:0]                 cal_mag2;
+logic                        cal_last;
+logic                        cal_busy, cal_done;
 
 // peak_xca -> bin_to_freq
 logic                        peak_valid;
@@ -303,6 +311,27 @@ telemetry_uart_tx #(
     .uart_txd    (UART_TXD)
 );
 
+// button-triggered baseline subtraction (see noise_cal.sv). The UART tap
+// above deliberately stays on the raw power_stage stream so captures still
+// show the unsubtracted spectrum.
+noise_cal #(
+    .FFT_N (FFT_N)
+) noise_cal_inst (
+    .clk         (CLOCK_50),
+    .rst_n       (init_done),
+    .cal_btn     (KEY[0]),
+    .power_valid (power_valid),
+    .power_bin   (power_bin),
+    .power_mag2  (power_mag2),
+    .power_last  (power_last),
+    .cal_valid   (cal_valid),
+    .cal_bin     (cal_bin),
+    .cal_mag2    (cal_mag2),
+    .cal_last    (cal_last),
+    .cal_busy    (cal_busy),
+    .cal_done    (cal_done)
+);
+
 // cross-correlation peak tracking - matched-filters the spectrum against
 // two Gaussian templates (narrow/wide, for low/high speed returns) and
 // interpolates the winner to sub-bin precision (see peak_xca.sv)
@@ -319,10 +348,10 @@ peak_xca #(
 ) peak_xca_inst (
     .clk           (CLOCK_50),
     .rst_n         (init_done),
-    .power_valid   (power_valid),
-    .power_bin     (power_bin),
-    .power_mag2    (power_mag2),
-    .power_last    (power_last),
+    .power_valid   (cal_valid),
+    .power_bin     (cal_bin),
+    .power_mag2    (cal_mag2),
+    .power_last    (cal_last),
     .peak_valid    (peak_valid),
     .peak_bin      (peak_bin),
     .peak_bin_frac (peak_bin_frac),
@@ -377,7 +406,11 @@ assign LCD_BLON = 1'b0;
 // indicators
 assign LEDG[0] = pll_locked;   // green: PLL stable
 assign LEDG[1] = init_done;    // green: codec configured
-assign LEDG[8:2] = '0;
+// flashes (~3 Hz) while calibrating, solid once a baseline is applied
+logic [23:0] cal_blink;
+always_ff @(posedge CLOCK_50) cal_blink <= cal_blink + 1'b1;
+assign LEDG[2] = cal_busy ? cal_blink[23] : cal_done;
+assign LEDG[8:3] = '0;
 
 assign LEDR[0] = fft_overrun;     // red: overlap_buffer tried to start a new window before FFT read the last one
 assign LEDR[1] = fft_sink_stall;  // red: hamming_window presented data the FFT IP didn't accept

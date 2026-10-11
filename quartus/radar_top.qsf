@@ -81,6 +81,8 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to LCD_BLON
 # ---------------------------------------------------------------------------
 # RS-232 (UART telemetry, dev/tuning use only — Table 4-18, DE2-115 User Manual)
 # ---------------------------------------------------------------------------
+set_location_assignment PIN_M23 -to KEY[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to KEY[0]
 set_location_assignment PIN_G9 -to UART_TXD
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to UART_TXD
 
@@ -139,6 +141,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE spectrum_uart_tx.sv
 set_global_assignment -name SYSTEMVERILOG_FILE telemetry_uart_tx.sv
 set_global_assignment -name SYSTEMVERILOG_FILE lcd_freq_display.sv
 set_global_assignment -name SYSTEMVERILOG_FILE power_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE noise_cal.sv
 set_global_assignment -name SYSTEMVERILOG_FILE peak_tracking_argmax.sv
 set_global_assignment -name SYSTEMVERILOG_FILE peak_xca.sv
 set_global_assignment -name SYSTEMVERILOG_FILE xca_core.sv
